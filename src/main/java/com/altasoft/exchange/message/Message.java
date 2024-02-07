@@ -23,6 +23,11 @@ public class Message {
     @JoinColumn(name = "user_id", nullable = false)
     private User author;
 
+    //добавим получателя, его мы берём из хедера кафки
+    @ManyToOne
+    @JoinColumn(name = "recipient_id", nullable = false)
+    private User recipient;
+
     @Column(nullable = false)
     private String content;
 
