@@ -21,7 +21,14 @@ public class MessageController {
 
     @PostMapping("/send-message")
     public String sendMessage(@RequestBody SendMessageRequest request) {
-        messageProducer.sendMessage("main-topic", request.getMessage(), request.getAuthorUserName(), request.getRecipientUserName());
+        // Создаем объект MessageJson из данных запроса
+        MessageJson messageJson = new MessageJson();
+        messageJson.setMessage(request.getMessage());
+        messageJson.setAuthorUserName(request.getAuthorUserName());
+        messageJson.setRecipientUserName(request.getRecipientUserName());
+
+        // Передаем объект MessageJson в MessageProducer
+        messageProducer.sendMessage("main-topic", messageJson);
         return "Message sent";
     }
 
@@ -33,6 +40,5 @@ public class MessageController {
         private String message;
         private String authorUserName;
         private String recipientUserName;
-
     }
 }

@@ -2,6 +2,8 @@ package com.altasoft.exchange.message;
 
 import com.altasoft.exchange.user.User;
 import com.altasoft.exchange.user.UserRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -34,6 +36,22 @@ public class MessageConsumer {
     @KafkaListener(topics = "main-topic")
     @Transactional
     public void listenToMainTopic(ConsumerRecord<String, String> record) {
+        LOGGER.info("Вошли в метод слушателя");
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(record.value());
+
+            // Извлекаем и логируем необходимые данные
+            String message = rootNode.path("message").asText();
+            String authorUserName = rootNode.path("authorUserName").asText();
+            String recipientUserName = rootNode.path("recipientUserName").asText();
+            LOGGER.info("Содержимое сообщения: message ----> {}, authorUserName ----> {}, recipientUserName ----> {}",
+                    message, authorUserName, recipientUserName);
+        } catch (Exception e) {
+            LOGGER.error("Ошибка при обработке JSON сообщения: {}", e.getMessage());
+        }
+
 
         // Извлечение имени пользователя-получателя и автора из хедера сообщения
         String recipientUserName = new String(record.headers().lastHeader("recipientUserName").value(), StandardCharsets.UTF_8);
@@ -43,7 +61,7 @@ public class MessageConsumer {
         LOGGER.info("Получено сообщение: authorName ----> {}, recipientName -----> {}, message -----> {}",
                 authorUserName, recipientUserName, record.value());
 
-        LOGGER.info("Вошли в метод слушателя");
+
 
         User recipient = userRepository.findByUserName(recipientUserName)
                 .orElseThrow(() -> new RuntimeException("Recipient user not found: " + recipientUserName));
