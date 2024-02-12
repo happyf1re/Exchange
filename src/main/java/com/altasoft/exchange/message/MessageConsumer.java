@@ -34,14 +34,17 @@ public class MessageConsumer {
     @KafkaListener(topics = "main-topic")
     @Transactional
     public void listenToMainTopic(ConsumerRecord<String, String> record) {
-        LOGGER.info("Вошли в метод слушателя");
-        // Извлечение имени пользователя-получателя из хедера сообщения
+
+        // Извлечение имени пользователя-получателя и автора из хедера сообщения
         String recipientUserName = new String(record.headers().lastHeader("recipientUserName").value(), StandardCharsets.UTF_8);
-        LOGGER.info(String.format("Прочитали хедер получателя, вот он ----------> %s", recipientUserName));
-        // Извлечение имени пользователя-автора из хедера сообщения
         String authorUserName = new String(record.headers().lastHeader("authorUserName").value(), StandardCharsets.UTF_8);
-        LOGGER.info(String.format("Прочитали хедер автора, вот он ----------> %s", authorUserName));
-        // Поиск пользователя-получателя в базе данных
+
+        // Выводим полную информацию о сообщении в лог
+        LOGGER.info("Получено сообщение: authorName ----> {}, recipientName -----> {}, message -----> {}",
+                authorUserName, recipientUserName, record.value());
+
+        LOGGER.info("Вошли в метод слушателя");
+
         User recipient = userRepository.findByUserName(recipientUserName)
                 .orElseThrow(() -> new RuntimeException("Recipient user not found: " + recipientUserName));
 
