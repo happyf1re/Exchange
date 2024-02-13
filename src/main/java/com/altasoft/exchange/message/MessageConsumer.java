@@ -33,7 +33,7 @@ public class MessageConsumer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    @KafkaListener(topics = "main-topic")
+    @KafkaListener(topics = "main-topic", groupId = "group-id")
     @Transactional
     public void listenToMainTopic(ConsumerRecord<String, String> record) {
         LOGGER.info("Вошли в метод слушателя");
