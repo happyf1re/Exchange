@@ -33,25 +33,5 @@ public class MessageProducer {
                 LOGGER.error("Ошибка при сериализации сообщения в JSON: {}", e.getMessage());
             }
 
-//        try {
-//            // Пробуем сериализовать объект MessageJson в строку JSON
-//            String jsonMessage = objectMapper.writeValueAsString(messageContent);
-//            // Если сериализация прошла успешно, логируем это
-//            LOGGER.info("=======================Сообщение успешно сериализовано===========================");
-//            LOGGER.info("Сериализованное сообщение: {}", jsonMessage);
-//
-//            // Отправляем сообщение в Kafka
-//            Message<String> message = MessageBuilder
-//                    .withPayload(jsonMessage)
-//                    .setHeader(KafkaHeaders.TOPIC, topic)
-//                    .setHeader("authorUserName", messageContent.getAuthorUserName().getBytes(StandardCharsets.UTF_8))
-//                    .setHeader("recipientUserName", messageContent.getRecipientUserName().getBytes(StandardCharsets.UTF_8))
-//                    .build();
-//            kafkaTemplate.send(message);
-//            LOGGER.info("=======================Сообщение отправлено в кафку===========================");
-//        } catch (JsonProcessingException e) {
-//            // Логируем ошибку, если сериализация не удалась
-//            LOGGER.error("Ошибка при сериализации сообщения в JSON: {}", e.getMessage());
-//        }
     }
 }

@@ -32,28 +32,6 @@ public class MessageConsumer {
     public void listenToMainTopic(String messageJsonStr) {
         LOGGER.info("Вошли в метод слушателя");
 
-//        try {
-//            ObjectMapper mapper = new ObjectMapper();
-//            JsonNode rootNode = mapper.readTree(record.value());
-//
-//            // Извлекаем и логируем необходимые данные
-//            String message = rootNode.path("message").asText();
-//            String authorUserName = rootNode.path("authorUserName").asText();
-//            String recipientUserName = rootNode.path("recipientUserName").asText();
-//            LOGGER.info("Содержимое сообщения: message ----> {}, authorUserName ----> {}, recipientUserName ----> {}",
-//                    message, authorUserName, recipientUserName);
-//        } catch (Exception e) {
-//            LOGGER.error("Ошибка при обработке JSON сообщения: {}", e.getMessage());
-//        }
-
-
-//        // Извлечение имени пользователя-получателя и автора из хедера сообщения
-//        String recipientUserName = new String(record.headers().lastHeader("recipientUserName").value(), StandardCharsets.UTF_8);
-//        String authorUserName = new String(record.headers().lastHeader("authorUserName").value(), StandardCharsets.UTF_8);
-//
-//        // Выводим полную информацию о сообщении в лог
-//        LOGGER.info("Получено сообщение: authorName ----> {}, recipientName -----> {}, message -----> {}",
-//                authorUserName, recipientUserName, record.value());
 
         try {
             MessageJson messageJson = objectMapper.readValue(messageJsonStr, MessageJson.class);
@@ -65,29 +43,5 @@ public class MessageConsumer {
         }
 
 
-//        User recipient = userRepository.findByUserName(recipientUserName)
-//                .orElseThrow(() -> new RuntimeException("Recipient user not found: " + recipientUserName));
-//
-//        // Поиск пользователя-автора в базе данных
-//        User author = userRepository.findByUserName(authorUserName)
-//                .orElseThrow(() -> new RuntimeException("Author user not found: " + authorUserName));
-//
-//        // Создание и сохранение сообщения в базе данных
-//        Message message = new Message();
-//        message.setAuthor(author);
-//        message.setRecipient(recipient);
-//        message.setContent(record.value());
-//        message.setTimestamp(LocalDateTime.now());
-//        messageRepository.save(message);
-//
-//        // Отправка сообщения в топик, соответствующий пользователю-получателю
-//        String targetTopic = recipientUserName + "-topic";
-//        try {
-//            kafkaTemplate.send(targetTopic, record.value());
-//            LOGGER.info("Message sent to topic: {}", targetTopic);
-//        } catch (KafkaException e) {
-//            LOGGER.error("Failed to send message to topic: {}. Error: {}", targetTopic, e.getMessage());
-//            // Здесь можно добавить дополнительную логику обработки ошибки, например, повторную отправку или уведомление администратора
-//        }
     }
 }

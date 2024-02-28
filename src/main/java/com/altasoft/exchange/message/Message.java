@@ -20,12 +20,12 @@ public class Message {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User author;
 
     //добавим получателя, его мы берём из хедера кафки
     @ManyToOne
-    @JoinColumn(name = "recipient_id", nullable = false)
+    @JoinColumn(name = "recipient_id")
     private User recipient;
 
     @Column(nullable = false)
