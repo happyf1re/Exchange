@@ -16,7 +16,6 @@ public class StringMessageProducer {
     }
 
     public void sendMessage(String topic, String message) {
-
         try {
             LOGGER.info("Отправляем сообщение в кафку: {}", message);
             kafkaTemplate.send(topic, message);

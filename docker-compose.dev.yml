@@ -1,0 +1,91 @@
+version: "3.7"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+        - postgres
+    ports:
+       - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/dev.exchange.1
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: 176.53.163.42:9092
+    networks:
+      - "mdlp2"
+  rabbitmq:
+    image: "rabbitmq:3.11.3-alpine"
+    environment:
+      RABBITMQ_DEFAULT_USER: "rabbit"
+      RABBITMQ_DEFAULT_PASS: "rabbit"
+    restart: "always"
+    command: "rabbitmq-server"
+    healthcheck:
+      test: "rabbitmq-diagnostics -q ping"
+      interval: "5s"
+      timeout: "5s"
+      retries: 3
+    networks:
+      - "mdlp2"
+  redis:
+    image: "redis:7.0.5-alpine"
+    restart: "always"
+    networks:
+      - "mdlp2"
+    volumes:
+      - "./data:/data"
+    #ports:
+    #  - "6379:6379"
+    healthcheck:
+      test:
+        - "CMD"
+        - "redis-cli"
+        - "--raw"
+        - "incr"
+        - "ping"
+      interval: "5s"
+      timeout: "5s"
+      retries: 3
+    command: "--save 60 1 --loglevel warning --replica-read-only no"
+  postgres:
+    image: "postgres"
+    restart: "always"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: 'cdf90031-bfa4-4aa0' #пароль
+      POSTGRES_USER: 'web' #имя пользователя
+    volumes :
+      - ./db_data:/var/lib/postgresql/data
+    networks:
+      - "mdlp2"
+  #приложение 1
+  ex1:
+    container_name: "ex1"
+    image: "alta.a-m0.ru/kafka-test:1.0.1"
+      #build:
+    #context: "../frame"
+    restart: "unless-stopped"
+    environment:
+      - "APP_DATABASE=dev.exchange.1" #имя БД -- можно изменить
+      - "APP_DB_HOST=postgres" #хост с БД - экземпляр сервиса postgres (см выше)
+      - "APP_DB_USER=web" #пользователь БД
+      - "APP_DB_PASSWORD=cdf90031-bfa4-4aa0" #пароль пользователя БД
+      - "APP_RABBIT_HOST=rabbitmq"
+      - "APP_RABBIT_PORT=5672"
+      - "APP_RABBIT_USER=rabbit"
+      - "APP_RABBIT_PASSWORD=rabbit"
+      - "DEBUG=kafka-node:*"
+    networks:
+      - "mdlp2"
+    ports:
+      - "8557:8001" #пробрасываемый порт
+    depends_on:
+      - "postgres"
+      - "redis"
+      - "rabbitmq"
+
+
+networks:
+  mdlp2:
+    driver: "bridge"
