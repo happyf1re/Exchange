@@ -35,13 +35,12 @@ public class StringMessageConsumer {
         JsonNode jsonNode = objectMapper.readTree(message);
         //извлекаем имя получателя
         String recipientName = jsonNode.get("recipientName").asText();
-        //извлекаем сообщение
-        String content = jsonNode.get("message").asText();
-        //перенаправляем
-        stringMessageProducer.sendMessage(recipientName + "-topic", content);
+
+        LOGGER.info("ВОТ СООБЩЕНИЕ, КОТОРОЕ ОТПРАВЛЯЕТСЯ В ТОПИК ЮЗЕРА --------------- {}", message);
+        stringMessageProducer.sendMessage(recipientName + "-topic", message);
 
         StringMessage newMessage = new StringMessage();
-        newMessage.setContent(message);
+        newMessage.setMessage(message);
         stringMessageRepository.save(newMessage);
     }
 

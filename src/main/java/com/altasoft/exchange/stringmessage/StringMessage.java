@@ -16,5 +16,5 @@ public class StringMessage {
     private Integer id;
 
     @Column(nullable = false)
-    private String content;
+    private String message;
 }
