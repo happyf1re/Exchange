@@ -1,8 +1,8 @@
-package com.altasoft.exchange.stringmessage;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface StringMessageRepository extends JpaRepository<StringMessage, Integer> {
+//package com.altasoft.exchange.stringmessage;
+//
+//import org.springframework.data.jpa.repository.JpaRepository;
+//import org.springframework.stereotype.Repository;
+//
+//@Repository
+//public interface StringMessageRepository extends JpaRepository<StringMessage, Integer> {
 }
