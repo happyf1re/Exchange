@@ -26,24 +26,22 @@ public class MessageProducer {
 
     public void sendMessage(String topic, MessageJson messageContent) {
         try {
-            // Пробуем сериализовать объект MessageJson в строку JSON
+            // Сериализация объекта MessageJson в строку JSON
             String jsonMessage = objectMapper.writeValueAsString(messageContent);
-            // Если сериализация прошла успешно, логируем это
-            LOGGER.info("=======================Сообщение успешно сериализовано===========================");
-            LOGGER.info("Сериализованное сообщение: {}", jsonMessage);
 
-            // Отправляем сообщение в Kafka
-            Message<String> message = MessageBuilder
-                    .withPayload(jsonMessage)
+            // Логирование сериализованного сообщения
+            LOGGER.info("Serialized message: {}", jsonMessage);
+
+            // Отправка сообщения в Kafka
+            Message<String> message = MessageBuilder.withPayload(jsonMessage)
                     .setHeader(KafkaHeaders.TOPIC, topic)
                     .setHeader("authorUserName", messageContent.getAuthorUserName().getBytes(StandardCharsets.UTF_8))
                     .setHeader("recipientUserName", messageContent.getRecipientUserName().getBytes(StandardCharsets.UTF_8))
                     .build();
             kafkaTemplate.send(message);
-            LOGGER.info("=======================Сообщение отправлено в кафку===========================");
+            LOGGER.info("Message sent to Kafka topic: {}", topic);
         } catch (JsonProcessingException e) {
-            // Логируем ошибку, если сериализация не удалась
-            LOGGER.error("Ошибка при сериализации сообщения в JSON: {}", e.getMessage());
+            LOGGER.error("Error serializing message to JSON: {}", e.getMessage());
         }
     }
 }

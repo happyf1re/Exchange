@@ -62,7 +62,7 @@ services:
   #приложение 1
   ex1:
     container_name: "ex1"
-    image: "alta.a-m0.ru/kafka-test:1.0.1"
+    image: "hub.a-m0.ru/kafka_test:1.0.3"
       #build:
     #context: "../frame"
     restart: "unless-stopped"

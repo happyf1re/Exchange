@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +21,7 @@ public class MessageController {
     }
 
     @PostMapping("/send-message")
-    public String sendMessage(@RequestBody SendMessageRequest request) {
+    public ResponseEntity<String> sendMessage(@RequestBody SendMessageRequest request) {
         // Создаем объект MessageJson из данных запроса
         MessageJson messageJson = new MessageJson();
         messageJson.setMessage(request.getMessage());
@@ -29,7 +30,7 @@ public class MessageController {
 
         // Передаем объект MessageJson в MessageProducer
         messageProducer.sendMessage("main-topic", messageJson);
-        return "Message sent";
+        return ResponseEntity.ok("Message sent");
     }
 
     @Getter
