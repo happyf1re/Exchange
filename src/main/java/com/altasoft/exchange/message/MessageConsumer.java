@@ -34,25 +34,6 @@ public class MessageConsumer {
         this.objectMapper = objectMapper;
     }
 
-
-//    @KafkaListener(topics = "main-topic")
-//    public void listenToMainTopic(ConsumerRecord<String, String> record) {
-//        LOGGER.info("Entered listener method");
-//
-//        try {
-//            // Десериализация JSON в объект MessageJson
-//            ObjectMapper mapper = new ObjectMapper();
-//            MessageJson messageJson = mapper.readValue(record.value(), MessageJson.class);
-//            LOGGER.info("Message content: message ----> {}, authorUserName ----> {}, recipientUserName ----> {}",
-//                    messageJson.getMessage(), messageJson.getAuthorUserName(), messageJson.getRecipientUserName());
-//
-//            // Обработка сообщения
-//            processMessage(messageJson);
-//        } catch (Exception e) {
-//            LOGGER.error("Error processing message: {}", e.getMessage());
-//        }
-//    }
-
     @KafkaListener(topics = "main-topic")
     public void listen(ConsumerRecord<String, String> record) throws JsonProcessingException {
         LOGGER.info("Received message in main-topic: {}", record.value());
