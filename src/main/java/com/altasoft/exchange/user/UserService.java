@@ -54,4 +54,13 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    @Transactional
+    public User login(String userName, String password) {
+        User user = userRepository.findByUserName(userName)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!user.getPassword().equals(password)) {
+            throw new RuntimeException("Invalid password");
+        }
+        return user;
+    }
 }

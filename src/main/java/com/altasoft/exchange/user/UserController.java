@@ -22,6 +22,16 @@ public class UserController {
         return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User user) {
+        try {
+            User loggedInUser = userService.login(user.getUserName(), user.getPassword());
+            return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
+    }
+
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Integer id) {
         return userService.getUserById(id);
@@ -41,6 +51,4 @@ public class UserController {
     public void deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
     }
-
-
 }

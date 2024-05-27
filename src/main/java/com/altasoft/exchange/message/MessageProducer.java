@@ -10,18 +10,16 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-
 @Service
 public class MessageProducer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageProducer.class);
     private final KafkaTemplate<String, String> kafkaTemplate;
-    private final ObjectMapper objectMapper; // Добавляем ObjectMapper
+    private final ObjectMapper objectMapper;
 
     public MessageProducer(KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
         this.kafkaTemplate = kafkaTemplate;
-        this.objectMapper = objectMapper; // Инициализируем ObjectMapper
+        this.objectMapper = objectMapper;
     }
 
     public void sendMessage(String topic, MessageJson messageContent) {
@@ -35,8 +33,6 @@ public class MessageProducer {
             // Отправка сообщения в Kafka
             Message<String> message = MessageBuilder.withPayload(jsonMessage)
                     .setHeader(KafkaHeaders.TOPIC, topic)
-                    .setHeader("authorUserName", messageContent.getAuthorUserName().getBytes(StandardCharsets.UTF_8))
-                    .setHeader("recipientUserName", messageContent.getRecipientUserName().getBytes(StandardCharsets.UTF_8))
                     .build();
             kafkaTemplate.send(message);
             LOGGER.info("Message sent to Kafka topic: {}", topic);

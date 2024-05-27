@@ -57,7 +57,7 @@ public class MessageConsumer {
         message.setTimestamp(LocalDateTime.now());
         messageRepository.save(message);
 
-        // Отправка сообщения в топик получателя
+        // Логирование отправки сообщения в топик получателя
         String targetTopic = recipient.getUserName() + "-topic";
         try {
             kafkaTemplate.send(targetTopic, objectMapper.writeValueAsString(messageJson));

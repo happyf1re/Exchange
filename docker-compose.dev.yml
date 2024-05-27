@@ -5,14 +5,15 @@ services:
       context: .
       dockerfile: Dockerfile
     depends_on:
-        - postgres
+      - postgres
     ports:
-       - "8080:8080"
+      - "8080:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/dev.exchange.1
       SPRING_KAFKA_BOOTSTRAP-SERVERS: 176.53.163.42:9092
     networks:
       - "mdlp2"
+
   rabbitmq:
     image: "rabbitmq:3.11.3-alpine"
     environment:
@@ -27,6 +28,7 @@ services:
       retries: 3
     networks:
       - "mdlp2"
+
   redis:
     image: "redis:7.0.5-alpine"
     restart: "always"
@@ -34,8 +36,6 @@ services:
       - "mdlp2"
     volumes:
       - "./data:/data"
-    #ports:
-    #  - "6379:6379"
     healthcheck:
       test:
         - "CMD"
@@ -47,6 +47,7 @@ services:
       timeout: "5s"
       retries: 3
     command: "--save 60 1 --loglevel warning --replica-read-only no"
+
   postgres:
     image: "postgres"
     restart: "always"
@@ -55,16 +56,14 @@ services:
     environment:
       POSTGRES_PASSWORD: 'cdf90031-bfa4-4aa0' #пароль
       POSTGRES_USER: 'web' #имя пользователя
-    volumes :
+    volumes:
       - ./db_data:/var/lib/postgresql/data
     networks:
       - "mdlp2"
-  #приложение 1
+
   ex1:
     container_name: "ex1"
     image: "hub.a-m0.ru/kafka_test:1.0.3"
-      #build:
-    #context: "../frame"
     restart: "unless-stopped"
     environment:
       - "APP_DATABASE=dev.exchange.1" #имя БД -- можно изменить
@@ -85,6 +84,16 @@ services:
       - "redis"
       - "rabbitmq"
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - app
+    networks:
+      - "mdlp2"
 
 networks:
   mdlp2:
