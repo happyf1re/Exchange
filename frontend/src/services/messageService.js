@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api/v1/messages';
+const API_URL = 'https://exchange.a-m0.ru/api/v1/messages';
 
 const sendMessage = async (messageData) => {
     const response = await axios.post(`${API_URL}/send`, messageData);
