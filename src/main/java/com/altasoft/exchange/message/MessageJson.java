@@ -17,6 +17,8 @@ public class MessageJson {
     private String authorUserName;
     @JsonProperty("recipientUserName")
     private String recipientUserName;
+    @JsonProperty("channelId")
+    private Integer channelId;
 
     @Override
     public String toString() {
@@ -24,6 +26,7 @@ public class MessageJson {
                 "message='" + message + '\'' +
                 ", authorUserName='" + authorUserName + '\'' +
                 ", recipientUserName='" + recipientUserName + '\'' +
+                ", channelId=" + channelId +
                 '}';
     }
 }

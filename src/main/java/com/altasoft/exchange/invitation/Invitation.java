@@ -1,5 +1,4 @@
-package com.altasoft.exchange.message;
-
+package com.altasoft.exchange.invitation;
 
 import com.altasoft.exchange.channel.Channel;
 import com.altasoft.exchange.user.User;
@@ -14,28 +13,26 @@ import java.time.LocalDateTime;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "_messages")
-public class Message {
+@Table(name = "_invitations")
+public class Invitation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
-
-    @ManyToOne
-    @JoinColumn(name = "recipient_id", nullable = false)
-    private User recipient;
-
-    @ManyToOne
     @JoinColumn(name = "channel_id", nullable = false)
     private Channel channel;
 
-    @Column(nullable = false)
-    private String content;
+    @ManyToOne
+    @JoinColumn(name = "inviter_id", nullable = false)
+    private User inviter;
+
+    @ManyToOne
+    @JoinColumn(name = "invitee_id", nullable = false)
+    private User invitee;
 
     @Column(nullable = false)
     private LocalDateTime timestamp;
 }
+

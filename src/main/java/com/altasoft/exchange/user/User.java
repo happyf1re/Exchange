@@ -1,7 +1,10 @@
 package com.altasoft.exchange.user;
 
+import com.altasoft.exchange.subscription.Subscription;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Set;
 
 @Entity
 @Getter
@@ -24,4 +27,7 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String email;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Subscription> subscriptions;
 }
