@@ -1,11 +1,17 @@
-import { FETCH_CHANNELS_SUCCESS, FETCH_CHANNELS_FAILURE, SUBSCRIBE_SUCCESS, SUBSCRIBE_FAILURE, UNSUBSCRIBE_SUCCESS, UNSUBSCRIBE_FAILURE } from '../types';
+import {
+    FETCH_CHANNELS_SUCCESS,
+    FETCH_CHANNELS_FAILURE,
+    SUBSCRIBE_CHANNEL_SUCCESS,
+    UNSUBSCRIBE_CHANNEL_SUCCESS,
+    CREATE_CHANNEL_SUCCESS
+} from '../types';
 
 const initialState = {
     channels: [],
     error: null,
 };
 
-const channelReducer = (state = initialState, action) => {
+export default function channelReducer(state = initialState, action) {
     switch (action.type) {
         case FETCH_CHANNELS_SUCCESS:
             return {
@@ -16,23 +22,35 @@ const channelReducer = (state = initialState, action) => {
         case FETCH_CHANNELS_FAILURE:
             return {
                 ...state,
+                channels: [],
                 error: action.payload,
             };
-        case SUBSCRIBE_SUCCESS:
-        case UNSUBSCRIBE_SUCCESS:
+        case SUBSCRIBE_CHANNEL_SUCCESS:
             return {
                 ...state,
-                error: null,
+                channels: state.channels.map(channel =>
+                    channel.id === action.payload.id ? { ...channel, isSubscribed: true } : channel
+                ),
             };
-        case SUBSCRIBE_FAILURE:
-        case UNSUBSCRIBE_FAILURE:
+        case UNSUBSCRIBE_CHANNEL_SUCCESS:
             return {
                 ...state,
-                error: action.payload,
+                channels: state.channels.map(channel =>
+                    channel.id === action.payload.id ? { ...channel, isSubscribed: false } : channel
+                ),
+            };
+        case CREATE_CHANNEL_SUCCESS:
+            return {
+                ...state,
+                channels: [...state.channels, action.payload],
             };
         default:
             return state;
     }
-};
+}
 
-export default channelReducer;
+
+
+
+
+

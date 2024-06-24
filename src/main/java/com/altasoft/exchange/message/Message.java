@@ -26,10 +26,6 @@ public class Message {
     private User author;
 
     @ManyToOne
-    @JoinColumn(name = "recipient_id", nullable = false)
-    private User recipient;
-
-    @ManyToOne
     @JoinColumn(name = "channel_id", nullable = false)
     private Channel channel;
 
@@ -39,3 +35,5 @@ public class Message {
     @Column(nullable = false)
     private LocalDateTime timestamp;
 }
+
+

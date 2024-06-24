@@ -15,8 +15,6 @@ public class MessageJson {
     private String message;
     @JsonProperty("authorUserName")
     private String authorUserName;
-    @JsonProperty("recipientUserName")
-    private String recipientUserName;
     @JsonProperty("channelId")
     private Integer channelId;
 
@@ -25,8 +23,8 @@ public class MessageJson {
         return "MessageJson{" +
                 "message='" + message + '\'' +
                 ", authorUserName='" + authorUserName + '\'' +
-                ", recipientUserName='" + recipientUserName + '\'' +
                 ", channelId=" + channelId +
                 '}';
     }
 }
+

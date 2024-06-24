@@ -1,18 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../store/actions/authActions';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = ({ toggleForm }) => {
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
-    const { error } = useSelector((state) => state.auth);
+    const navigate = useNavigate();
+    const { error, user } = useSelector((state) => state.auth);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         dispatch(loginUser({ userName, password }));
     };
+
+    useEffect(() => {
+        if (user) {
+            navigate('/dashboard');
+        }
+    }, [user, navigate]);
 
     return (
         <Box component="form" onSubmit={handleSubmit}>
@@ -36,7 +44,7 @@ const LoginForm = ({ toggleForm }) => {
             />
             {error && (
                 <Typography color="error" variant="body2" gutterBottom>
-                    {error}
+                    {typeof error === 'object' ? JSON.stringify(error) : error}
                 </Typography>
             )}
             <Button type="submit" variant="contained" color="primary" fullWidth>
@@ -50,4 +58,3 @@ const LoginForm = ({ toggleForm }) => {
 };
 
 export default LoginForm;
-

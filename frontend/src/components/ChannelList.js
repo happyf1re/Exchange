@@ -5,7 +5,8 @@ import { List, ListItem, ListItemText, Button, Box, Typography } from '@mui/mate
 
 const ChannelList = ({ onSelectChannel }) => {
     const dispatch = useDispatch();
-    const channels = useSelector((state) => state.channels);
+    const channels = useSelector((state) => state.channels.channels);
+    const error = useSelector((state) => state.channels.error);
 
     useEffect(() => {
         dispatch(fetchChannels());
@@ -19,17 +20,22 @@ const ChannelList = ({ onSelectChannel }) => {
         dispatch(unsubscribeFromChannel(channelId));
     };
 
+    if (!Array.isArray(channels)) {
+        return <Typography variant="h6">No channels available</Typography>;
+    }
+
     return (
         <Box>
             <Typography variant="h5" gutterBottom>Channels</Typography>
+            {error && <Typography color="error">{JSON.stringify(error)}</Typography>}
             <List>
                 {channels.map((channel) => (
                     <ListItem key={channel.id} button onClick={() => onSelectChannel(channel.id)}>
                         <ListItemText primary={channel.name} />
                         {channel.isSubscribed ? (
-                            <Button variant="contained" color="secondary" onClick={() => handleUnsubscribe(channel.id)}>Unsubscribe</Button>
+                            <Button variant="contained" color="secondary" onClick={(e) => { e.stopPropagation(); handleUnsubscribe(channel.id); }}>Unsubscribe</Button>
                         ) : (
-                            <Button variant="contained" color="primary" onClick={() => handleSubscribe(channel.id)}>Subscribe</Button>
+                            <Button variant="contained" color="primary" onClick={(e) => { e.stopPropagation(); handleSubscribe(channel.id); }}>Subscribe</Button>
                         )}
                     </ListItem>
                 ))}
@@ -39,3 +45,4 @@ const ChannelList = ({ onSelectChannel }) => {
 };
 
 export default ChannelList;
+

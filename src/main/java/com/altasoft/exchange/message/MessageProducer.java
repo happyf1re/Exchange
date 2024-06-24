@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
@@ -17,6 +18,7 @@ public class MessageProducer {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
+    @Autowired
     public MessageProducer(KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
         this.kafkaTemplate = kafkaTemplate;
         this.objectMapper = objectMapper;
@@ -24,13 +26,8 @@ public class MessageProducer {
 
     public void sendMessage(String topic, MessageJson messageContent) {
         try {
-            // Сериализация объекта MessageJson в строку JSON
             String jsonMessage = objectMapper.writeValueAsString(messageContent);
-
-            // Логирование сериализованного сообщения
             LOGGER.info("Serialized message: {}", jsonMessage);
-
-            // Отправка сообщения в Kafka
             Message<String> message = MessageBuilder.withPayload(jsonMessage)
                     .setHeader(KafkaHeaders.TOPIC, topic)
                     .build();
@@ -41,3 +38,7 @@ public class MessageProducer {
         }
     }
 }
+
+
+
+

@@ -5,10 +5,9 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/channels")
@@ -37,6 +36,12 @@ public class ChannelController {
     public ResponseEntity<String> inviteToChannel(@RequestBody InviteToChannelRequest request) {
         channelService.inviteToChannel(request.getInviterUserName(), request.getInviteeUserName(), request.getChannelId());
         return ResponseEntity.ok("Invitation sent");
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Channel>> getAllChannels() {
+        List<Channel> channels = channelService.getAllChannels();
+        return new ResponseEntity<>(channels, HttpStatus.OK);
     }
 
     @Getter

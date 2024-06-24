@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware, combineReducers } from 'redux';
-import thunk from 'redux-thunk'; // Убедитесь, что импортируем правильно
+import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import authReducer from './reducers/authReducer';
 import channelReducer from './reducers/channelReducer';
@@ -10,7 +10,7 @@ import notificationReducer from './reducers/notificationReducer';
 const rootReducer = combineReducers({
     auth: authReducer,
     channels: channelReducer,
-    messages: messageReducer,
+    message: messageReducer,
     invitations: invitationReducer,
     notifications: notificationReducer,
 });
@@ -21,3 +21,7 @@ const store = createStore(
 );
 
 export default store;
+
+
+
+

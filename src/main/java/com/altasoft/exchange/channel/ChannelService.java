@@ -1,9 +1,9 @@
 package com.altasoft.exchange.channel;
 
-import com.altasoft.exchange.subscription.Subscription;
-import com.altasoft.exchange.subscription.SubscriptionRepository;
 import com.altasoft.exchange.invitation.Invitation;
 import com.altasoft.exchange.invitation.InvitationRepository;
+import com.altasoft.exchange.subscription.Subscription;
+import com.altasoft.exchange.subscription.SubscriptionRepository;
 import com.altasoft.exchange.user.User;
 import com.altasoft.exchange.user.UserRepository;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ChannelService {
@@ -101,6 +102,10 @@ public class ChannelService {
         invitation.setTimestamp(LocalDateTime.now());
 
         invitationRepository.save(invitation);
+    }
+
+    public List<Channel> getAllChannels() {
+        return channelRepository.findAll();
     }
 }
 

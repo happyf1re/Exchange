@@ -1,4 +1,9 @@
-import { FETCH_INVITATIONS_SUCCESS, FETCH_INVITATIONS_FAILURE, ACCEPT_INVITATION_SUCCESS, ACCEPT_INVITATION_FAILURE } from '../types';
+import {
+    FETCH_INVITATIONS_SUCCESS,
+    FETCH_INVITATIONS_FAILURE,
+    ACCEPT_INVITATION_SUCCESS,
+    ACCEPT_INVITATION_FAILURE
+} from '../types';
 
 const initialState = {
     invitations: [],
@@ -34,3 +39,4 @@ const invitationReducer = (state = initialState, action) => {
 };
 
 export default invitationReducer;
+

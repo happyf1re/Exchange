@@ -5,16 +5,19 @@ import { List, ListItem, ListItemText, TextField, Button, Box, Typography } from
 
 const ChannelMessages = ({ channelId }) => {
     const dispatch = useDispatch();
-    const messages = useSelector((state) => state.messages);
+    const messages = useSelector((state) => state.message.messages) || [];
     const [newMessage, setNewMessage] = useState('');
+    const user = useSelector((state) => state.auth.user); // Получаем текущего пользователя
 
     useEffect(() => {
         dispatch(fetchChannelMessages(channelId));
     }, [dispatch, channelId]);
 
     const handleSendMessage = () => {
-        dispatch(sendMessage(channelId, newMessage));
-        setNewMessage('');
+        if (newMessage.trim() && user) {
+            dispatch(sendMessage(channelId, newMessage, user.userName));
+            setNewMessage('');
+        }
     };
 
     return (
@@ -27,16 +30,20 @@ const ChannelMessages = ({ channelId }) => {
                     </ListItem>
                 ))}
             </List>
-            <TextField
-                fullWidth
-                margin="normal"
-                label="Type a message"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-            />
-            <Button variant="contained" color="primary" onClick={handleSendMessage}>Send Message</Button>
+            <Box display="flex" mt={2}>
+                <TextField
+                    fullWidth
+                    margin="normal"
+                    label="Type a message"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                />
+                <Button variant="contained" color="primary" onClick={handleSendMessage} style={{ marginLeft: '10px' }}>Send</Button>
+            </Box>
         </Box>
     );
 };
 
 export default ChannelMessages;
+
+

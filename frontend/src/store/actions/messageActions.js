@@ -1,21 +1,25 @@
 import api from '../../api/api';
-import { FETCH_MESSAGES_SUCCESS, FETCH_MESSAGES_FAILURE, SEND_MESSAGE_SUCCESS, SEND_MESSAGE_FAILURE } from '../types';
 
 export const fetchChannelMessages = (channelId) => async (dispatch) => {
+    dispatch({ type: 'FETCH_MESSAGES_REQUEST' });
     try {
         const response = await api.get(`/messages/channel/${channelId}`);
-        dispatch({ type: FETCH_MESSAGES_SUCCESS, payload: response.data });
+        dispatch({ type: 'FETCH_MESSAGES_SUCCESS', payload: response.data });
     } catch (error) {
-        dispatch({ type: FETCH_MESSAGES_FAILURE, payload: error.response.data });
+        dispatch({ type: 'FETCH_MESSAGES_FAILURE', error: error.message });
     }
 };
 
-export const sendMessage = (channelId, message) => async (dispatch) => {
+export const sendMessage = (channelId, message, authorUserName) => async (dispatch) => {
+    dispatch({ type: 'SEND_MESSAGE_REQUEST' });
     try {
-        const response = await api.post('/messages/send', { channelId, message });
-        dispatch({ type: SEND_MESSAGE_SUCCESS, payload: response.data });
+        const response = await api.post('/messages/send', { message, authorUserName, channelId });
+        dispatch({ type: 'SEND_MESSAGE_SUCCESS', payload: response.data });
     } catch (error) {
-        dispatch({ type: SEND_MESSAGE_FAILURE, payload: error.response.data });
+        dispatch({ type: 'SEND_MESSAGE_FAILURE', error: error.message });
     }
 };
+
+
+
 

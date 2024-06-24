@@ -5,7 +5,8 @@ import { List, ListItem, ListItemText, Button, Box, Typography } from '@mui/mate
 
 const InvitationList = () => {
     const dispatch = useDispatch();
-    const invitations = useSelector((state) => state.invitations);
+    const invitations = useSelector((state) => state.invitations.invitations);
+    const error = useSelector((state) => state.invitations.error);
 
     useEffect(() => {
         dispatch(fetchInvitations());
@@ -15,9 +16,14 @@ const InvitationList = () => {
         dispatch(acceptInvitation(invitationId));
     };
 
+    if (!Array.isArray(invitations)) {
+        return <Typography variant="h6">No invitations available</Typography>;
+    }
+
     return (
         <Box>
             <Typography variant="h5" gutterBottom>Invitations</Typography>
+            {error && <Typography color="error">{JSON.stringify(error)}</Typography>}
             <List>
                 {invitations.map((invitation) => (
                     <ListItem key={invitation.id}>
@@ -31,3 +37,4 @@ const InvitationList = () => {
 };
 
 export default InvitationList;
+

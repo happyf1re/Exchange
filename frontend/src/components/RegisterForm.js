@@ -1,45 +1,67 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { Box, Button, TextField, Typography } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { registerUser } from '../store/actions/authActions';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterForm = ({ toggleForm }) => {
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { error, success } = useSelector((state) => state.auth);
 
-    const handleRegister = () => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
         dispatch(registerUser({ userName, password, email }));
     };
 
+    // Перенаправление на страницу логина после успешной регистрации
+    React.useEffect(() => {
+        if (success) {
+            navigate('/login');
+        }
+    }, [success, navigate]);
+
     return (
-        <Box>
-            <Typography variant="h4" gutterBottom>Register</Typography>
+        <Box component="form" onSubmit={handleSubmit}>
+            <Typography variant="h6" gutterBottom>
+                Register
+            </Typography>
             <TextField
+                label="Username"
                 fullWidth
                 margin="normal"
-                label="Username"
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
             />
             <TextField
-                fullWidth
-                margin="normal"
-                label="Password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
-            <TextField
-                fullWidth
-                margin="normal"
                 label="Email"
+                fullWidth
+                margin="normal"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
             />
-            <Button variant="contained" color="primary" onClick={handleRegister}>Register</Button>
-            <Button variant="text" color="secondary" onClick={toggleForm}>Switch to Login</Button>
+            <TextField
+                label="Password"
+                type="password"
+                fullWidth
+                margin="normal"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+            />
+            {error && (
+                <Typography color="error" variant="body2" gutterBottom>
+                    {error}
+                </Typography>
+            )}
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+                Register
+            </Button>
+            <Button fullWidth onClick={toggleForm}>
+                Login
+            </Button>
         </Box>
     );
 };

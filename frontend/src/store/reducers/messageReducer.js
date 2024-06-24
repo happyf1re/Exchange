@@ -1,32 +1,46 @@
-import { FETCH_MESSAGES_SUCCESS, FETCH_MESSAGES_FAILURE, SEND_MESSAGE_SUCCESS, SEND_MESSAGE_FAILURE } from '../types';
-
 const initialState = {
     messages: [],
+    loading: false,
     error: null,
 };
 
 const messageReducer = (state = initialState, action) => {
     switch (action.type) {
-        case FETCH_MESSAGES_SUCCESS:
+        case 'FETCH_MESSAGES_REQUEST':
             return {
                 ...state,
+                loading: true,
+                error: null,
+            };
+        case 'FETCH_MESSAGES_SUCCESS':
+            return {
+                ...state,
+                loading: false,
                 messages: action.payload,
+            };
+        case 'FETCH_MESSAGES_FAILURE':
+            return {
+                ...state,
+                loading: false,
+                error: action.error,
+            };
+        case 'SEND_MESSAGE_REQUEST':
+            return {
+                ...state,
+                loading: true,
                 error: null,
             };
-        case FETCH_MESSAGES_FAILURE:
+        case 'SEND_MESSAGE_SUCCESS':
             return {
                 ...state,
-                error: action.payload,
+                loading: false,
+                messages: [...state.messages, action.payload],
             };
-        case SEND_MESSAGE_SUCCESS:
+        case 'SEND_MESSAGE_FAILURE':
             return {
                 ...state,
-                error: null,
-            };
-        case SEND_MESSAGE_FAILURE:
-            return {
-                ...state,
-                error: action.payload,
+                loading: false,
+                error: action.error,
             };
         default:
             return state;
@@ -34,3 +48,4 @@ const messageReducer = (state = initialState, action) => {
 };
 
 export default messageReducer;
+

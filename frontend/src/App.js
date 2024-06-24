@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Invitations from './pages/Invitations';
@@ -13,12 +13,13 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/invitations" element={<Invitations />} />
-                <Route path="/" element={<Login />} />
+                <Route path="/" element={<Navigate to="/login" />} />
             </Routes>
         </div>
     );
 };
 
 export default App;
+
 
 
