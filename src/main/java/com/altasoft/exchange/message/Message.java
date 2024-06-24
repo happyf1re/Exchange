@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "_messages")
 public class Message {
 
     @Id

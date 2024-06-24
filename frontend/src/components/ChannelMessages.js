@@ -15,8 +15,10 @@ const ChannelMessages = ({ channelId }) => {
 
     const handleSendMessage = () => {
         if (newMessage.trim() && user) {
-            dispatch(sendMessage(channelId, newMessage, user.userName));
-            setNewMessage('');
+            dispatch(sendMessage(channelId, newMessage, user.userName)).then(() => {
+                setNewMessage('');
+                dispatch(fetchChannelMessages(channelId));
+            });
         }
     };
 
@@ -45,5 +47,4 @@ const ChannelMessages = ({ channelId }) => {
 };
 
 export default ChannelMessages;
-
 
