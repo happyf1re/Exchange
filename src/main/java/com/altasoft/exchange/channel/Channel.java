@@ -1,8 +1,9 @@
 package com.altasoft.exchange.channel;
 
-import com.altasoft.exchange.subscription.Subscription;
 import com.altasoft.exchange.message.Message;
+import com.altasoft.exchange.subscription.Subscription;
 import com.altasoft.exchange.user.User;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,6 +43,8 @@ public class Channel {
     private Set<Subscription> subscribers;
 
     @OneToMany(mappedBy = "channel")
+    @JsonManagedReference
     private Set<Message> messages;
 }
+
 

@@ -3,6 +3,7 @@ package com.altasoft.exchange.message;
 
 import com.altasoft.exchange.channel.Channel;
 import com.altasoft.exchange.user.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +15,6 @@ import java.time.LocalDateTime;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "_messages")
 public class Message {
 
     @Id
@@ -27,6 +27,7 @@ public class Message {
 
     @ManyToOne
     @JoinColumn(name = "channel_id", nullable = false)
+    @JsonBackReference
     private Channel channel;
 
     @Column(nullable = false)
@@ -35,5 +36,8 @@ public class Message {
     @Column(nullable = false)
     private LocalDateTime timestamp;
 }
+
+
+
 
 

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -38,13 +39,19 @@ public class MessageConsumer {
     }
 
     @KafkaListener(topicPattern = ".*")
-    public void listen(ConsumerRecord<String, String> record) throws JsonProcessingException {
+    public void listen(ConsumerRecord<String, String> record, Acknowledgment acknowledgment) throws JsonProcessingException {
         LOGGER.info("Received message: {}", record.value());
         MessageJson messageJson = objectMapper.readValue(record.value(), MessageJson.class);
         processMessage(messageJson);
+        acknowledgment.acknowledge();
     }
 
     public void processMessage(MessageJson messageJson) {
+        if (messageRepository.existsById(messageJson.getId())) {
+            LOGGER.info("Message with id {} already exists. Skipping processing.", messageJson.getId());
+            return;
+        }
+
         User author = userRepository.findByUserName(messageJson.getAuthorUserName())
                 .orElseThrow(() -> new RuntimeException("Author user not found: " + messageJson.getAuthorUserName()));
 
@@ -52,6 +59,7 @@ public class MessageConsumer {
                 .orElseThrow(() -> new RuntimeException("Channel not found: " + messageJson.getChannelId()));
 
         Message message = new Message();
+        message.setId(messageJson.getId());
         message.setAuthor(author);
         message.setContent(messageJson.getMessage());
         message.setTimestamp(LocalDateTime.now());
@@ -71,6 +79,10 @@ public class MessageConsumer {
         }
     }
 }
+
+
+
+
 
 
 
