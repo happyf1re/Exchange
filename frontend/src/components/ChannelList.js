@@ -6,6 +6,7 @@ import { List, ListItem, ListItemText, Button, Box, Typography } from '@mui/mate
 const ChannelList = ({ onSelectChannel }) => {
     const dispatch = useDispatch();
     const channels = useSelector((state) => state.channels.channels);
+    const user = useSelector((state) => state.auth.user); // Получаем текущего пользователя
     const error = useSelector((state) => state.channels.error);
 
     useEffect(() => {
@@ -13,11 +14,15 @@ const ChannelList = ({ onSelectChannel }) => {
     }, [dispatch]);
 
     const handleSubscribe = (channelId) => {
-        dispatch(subscribeToChannel(channelId));
+        if (user) {
+            dispatch(subscribeToChannel(channelId, user.id));
+        }
     };
 
     const handleUnsubscribe = (channelId) => {
-        dispatch(unsubscribeFromChannel(channelId));
+        if (user) {
+            dispatch(unsubscribeFromChannel(channelId, user.id));
+        }
     };
 
     if (!Array.isArray(channels)) {
@@ -45,4 +50,3 @@ const ChannelList = ({ onSelectChannel }) => {
 };
 
 export default ChannelList;
-

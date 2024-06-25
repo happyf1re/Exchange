@@ -32,6 +32,12 @@ public class ChannelController {
         return ResponseEntity.ok("Subscribed to channel");
     }
 
+    @PostMapping("/unsubscribe")
+    public ResponseEntity<String> unsubscribeFromChannel(@RequestBody SubscribeToChannelRequest request) {
+        channelService.unsubscribeFromChannel(request.getUserName(), request.getChannelId());
+        return ResponseEntity.ok("Unsubscribed from channel");
+    }
+
     @PostMapping("/invite")
     public ResponseEntity<String> inviteToChannel(@RequestBody InviteToChannelRequest request) {
         channelService.inviteToChannel(request.getInviterUserName(), request.getInviteeUserName(), request.getChannelId());

@@ -83,6 +83,20 @@ public class ChannelService {
     }
 
     @Transactional
+    public void unsubscribeFromChannel(String userName, Integer channelId) {
+        User user = userRepository.findByUserName(userName)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userName));
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new RuntimeException("Channel not found: " + channelId));
+        Subscription subscription = subscriptionRepository.findByUserAndChannel(user, channel)
+                .orElseThrow(() -> new RuntimeException("No such subscription"));
+
+        subscriptionRepository.delete(subscription);
+        channel.getSubscribers().remove(subscription);
+        channelRepository.save(channel);
+    }
+
+    @Transactional
     public void inviteToChannel(String inviterUserName, String inviteeUserName, Integer channelId) {
         User inviter = userRepository.findByUserName(inviterUserName)
                 .orElseThrow(() -> new RuntimeException("User not found: " + inviterUserName));
