@@ -28,18 +28,18 @@ export const createChannel = (channelData) => async (dispatch) => {
     }
 };
 
-export const subscribeToChannel = (channelId, userId) => async (dispatch) => {
+export const subscribeToChannel = (channelId, userName) => async (dispatch) => {
     try {
-        const response = await api.post('/channels/subscribe', { userId, channelId });
+        const response = await api.post('/channels/subscribe', { userName, channelId });
         dispatch({ type: SUBSCRIBE_CHANNEL_SUCCESS, payload: { channelId } });
     } catch (error) {
         console.error(error);
     }
 };
 
-export const unsubscribeFromChannel = (channelId, userId) => async (dispatch) => {
+export const unsubscribeFromChannel = (channelId, userName) => async (dispatch) => {
     try {
-        const response = await api.post('/channels/unsubscribe', { userId, channelId });
+        const response = await api.post('/channels/unsubscribe', { userName, channelId });
         dispatch({ type: UNSUBSCRIBE_CHANNEL_SUCCESS, payload: { channelId } });
     } catch (error) {
         console.error(error);

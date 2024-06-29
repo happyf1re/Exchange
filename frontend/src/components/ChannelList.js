@@ -15,13 +15,13 @@ const ChannelList = ({ onSelectChannel }) => {
 
     const handleSubscribe = (channelId) => {
         if (user) {
-            dispatch(subscribeToChannel(channelId, user.id));
+            dispatch(subscribeToChannel(channelId, user.userName));
         }
     };
 
     const handleUnsubscribe = (channelId) => {
         if (user) {
-            dispatch(unsubscribeFromChannel(channelId, user.id));
+            dispatch(unsubscribeFromChannel(channelId, user.userName));
         }
     };
 
