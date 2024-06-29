@@ -17,7 +17,10 @@ const Dashboard = () => {
 
     useEffect(() => {
         if (user) {
+            console.log("User found in Dashboard, fetching channels");
             dispatch(fetchChannels());
+        } else {
+            console.log("No user found in Dashboard");
         }
     }, [dispatch, user]);
 
@@ -95,9 +98,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
-
-
-
-

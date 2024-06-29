@@ -14,6 +14,7 @@ const initialState = {
 export default function channelReducer(state = initialState, action) {
     switch (action.type) {
         case FETCH_CHANNELS_SUCCESS:
+            console.log("Channels fetched successfully:", action.payload);
             return {
                 ...state,
                 channels: action.payload,
@@ -48,6 +49,7 @@ export default function channelReducer(state = initialState, action) {
             return state;
     }
 }
+
 
 
 

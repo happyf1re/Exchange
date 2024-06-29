@@ -10,6 +10,7 @@ const ChannelList = ({ onSelectChannel }) => {
     const error = useSelector((state) => state.channels.error);
 
     useEffect(() => {
+        console.log("Fetching channels...");
         dispatch(fetchChannels());
     }, [dispatch]);
 

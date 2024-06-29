@@ -10,10 +10,13 @@ import {
 
 export const fetchChannels = () => async (dispatch) => {
     try {
+        console.log("Fetching channels from API...");
         const response = await api.get('/channels');
+        console.log("Channels fetched:", response.data);
         dispatch({ type: FETCH_CHANNELS_SUCCESS, payload: response.data });
     } catch (error) {
         const errorMessage = error.response ? error.response.data : error.message;
+        console.error("Error fetching channels:", errorMessage);
         dispatch({ type: FETCH_CHANNELS_FAILURE, payload: errorMessage });
     }
 };

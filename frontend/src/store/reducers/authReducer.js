@@ -1,7 +1,7 @@
-import { LOGIN_SUCCESS, LOGIN_FAILURE, REGISTER_SUCCESS, REGISTER_FAILURE } from '../types';
+import { LOGIN_SUCCESS, LOGIN_FAILURE, REGISTER_SUCCESS, REGISTER_FAILURE, CHECK_AUTH, LOGOUT } from '../types';
 
 const initialState = {
-    user: null,
+    user: JSON.parse(localStorage.getItem('user')) || null,
     error: null,
     success: false,
 };
@@ -34,10 +34,24 @@ export default function authReducer(state = initialState, action) {
                 success: false,
                 error: action.payload,
             };
+        case CHECK_AUTH:
+            return {
+                ...state,
+                user: action.payload,
+                error: null,
+            };
+        case LOGOUT:
+            return {
+                ...state,
+                user: null,
+                error: null,
+            };
         default:
             return state;
     }
 }
+
+
 
 
 

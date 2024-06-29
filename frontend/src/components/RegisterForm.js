@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUser } from '../store/actions/authActions';
@@ -17,8 +17,7 @@ const RegisterForm = ({ toggleForm }) => {
         dispatch(registerUser({ userName, password, email }));
     };
 
-    // Перенаправление на страницу логина после успешной регистрации
-    React.useEffect(() => {
+    useEffect(() => {
         if (success) {
             navigate('/login');
         }
