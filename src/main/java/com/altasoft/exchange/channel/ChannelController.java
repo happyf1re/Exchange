@@ -21,7 +21,7 @@ public class ChannelController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Channel> createChannel(@RequestBody CreateChannelRequest request) {
+    public ResponseEntity<Channel> createChannel(@RequestBody ChannelController.CreateChannelRequest request) {
         Channel channel = channelService.createChannel(request.getName(), request.getCreatorUserName(), request.isPrivate(), request.getParentId());
         return new ResponseEntity<>(channel, HttpStatus.CREATED);
     }

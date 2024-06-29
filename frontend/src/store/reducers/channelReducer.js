@@ -29,14 +29,14 @@ export default function channelReducer(state = initialState, action) {
             return {
                 ...state,
                 channels: state.channels.map(channel =>
-                    channel.id === action.payload.id ? { ...channel, isSubscribed: true } : channel
+                    channel.id === action.payload.channelId ? { ...channel, isSubscribed: true } : channel
                 ),
             };
         case UNSUBSCRIBE_CHANNEL_SUCCESS:
             return {
                 ...state,
                 channels: state.channels.map(channel =>
-                    channel.id === action.payload.id ? { ...channel, isSubscribed: false } : channel
+                    channel.id === action.payload.channelId ? { ...channel, isSubscribed: false } : channel
                 ),
             };
         case CREATE_CHANNEL_SUCCESS:
@@ -48,6 +48,7 @@ export default function channelReducer(state = initialState, action) {
             return state;
     }
 }
+
 
 
 

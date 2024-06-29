@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Grid, Button, Modal, TextField, Typography } from '@mui/material';
 import ChannelList from '../components/ChannelList';
 import ChannelMessages from '../components/ChannelMessages';
 import Sidebar from '../components/Sidebar';
 import { useDispatch, useSelector } from 'react-redux';
-import { createChannel } from '../store/actions/channelActions';
+import { createChannel, fetchChannels } from '../store/actions/channelActions';
 
 const Dashboard = () => {
     const [selectedChannel, setSelectedChannel] = useState(null);
@@ -13,6 +13,13 @@ const Dashboard = () => {
     const [isPrivate, setIsPrivate] = useState(false);
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user);
+    const channels = useSelector((state) => state.channels.channels);
+
+    useEffect(() => {
+        if (user) {
+            dispatch(fetchChannels());
+        }
+    }, [dispatch, user]);
 
     const handleSelectChannel = (channelId) => {
         setSelectedChannel(channelId);
@@ -23,15 +30,24 @@ const Dashboard = () => {
 
     const handleCreateChannel = () => {
         if (channelName && user) {
+            console.log('Creating channel with data:', {
+                name: channelName,
+                creatorUserName: user.userName,
+                isPrivate,
+                parentId: null,
+            });
             dispatch(createChannel({
                 name: channelName,
                 creatorUserName: user.userName,
                 isPrivate,
-                parentId: null, // Обновить логику для подканалов, если нужно
-            }));
-            setChannelName('');
-            setIsPrivate(false);
-            handleClose();
+                parentId: null,
+            })).then(() => {
+                setChannelName('');
+                setIsPrivate(false);
+                handleClose();
+            }).catch((error) => {
+                console.error('Error creating channel:', error);
+            });
         }
     };
 
@@ -79,6 +95,9 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+
 
 
 

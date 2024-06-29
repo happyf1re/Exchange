@@ -50,3 +50,4 @@ const ChannelList = ({ onSelectChannel }) => {
 };
 
 export default ChannelList;
+

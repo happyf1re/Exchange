@@ -1,11 +1,11 @@
 import api from '../../api/api';
 import {
+    CREATE_CHANNEL_SUCCESS,
+    CREATE_CHANNEL_FAILURE,
     FETCH_CHANNELS_SUCCESS,
     FETCH_CHANNELS_FAILURE,
     SUBSCRIBE_CHANNEL_SUCCESS,
     UNSUBSCRIBE_CHANNEL_SUCCESS,
-    CREATE_CHANNEL_SUCCESS,
-    CREATE_CHANNEL_FAILURE
 } from '../types';
 
 export const fetchChannels = () => async (dispatch) => {
@@ -22,6 +22,7 @@ export const createChannel = (channelData) => async (dispatch) => {
     try {
         const response = await api.post('/channels/create', channelData);
         dispatch({ type: CREATE_CHANNEL_SUCCESS, payload: response.data });
+        dispatch(fetchChannels()); // добавим перезагрузку списка каналов после создания
     } catch (error) {
         const errorMessage = error.response ? error.response.data : error.message;
         dispatch({ type: CREATE_CHANNEL_FAILURE, payload: errorMessage });
@@ -30,7 +31,7 @@ export const createChannel = (channelData) => async (dispatch) => {
 
 export const subscribeToChannel = (channelId, userName) => async (dispatch) => {
     try {
-        const response = await api.post('/channels/subscribe', { userName, channelId });
+        await api.post('/channels/subscribe', { userName, channelId });
         dispatch({ type: SUBSCRIBE_CHANNEL_SUCCESS, payload: { channelId } });
     } catch (error) {
         console.error(error);
@@ -39,9 +40,10 @@ export const subscribeToChannel = (channelId, userName) => async (dispatch) => {
 
 export const unsubscribeFromChannel = (channelId, userName) => async (dispatch) => {
     try {
-        const response = await api.post('/channels/unsubscribe', { userName, channelId });
+        await api.post('/channels/unsubscribe', { userName, channelId });
         dispatch({ type: UNSUBSCRIBE_CHANNEL_SUCCESS, payload: { channelId } });
     } catch (error) {
         console.error(error);
     }
 };
+
