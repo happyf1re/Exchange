@@ -8,15 +8,27 @@ import {
     UNSUBSCRIBE_CHANNEL_SUCCESS,
 } from '../types';
 
-export const fetchChannels = () => async (dispatch) => {
+export const fetchChannels = () => async (dispatch, getState) => {
     try {
-        console.log("Fetching channels from API...");
+        const { user } = getState().auth;
         const response = await api.get('/channels');
-        console.log("Channels fetched:", response.data);
-        dispatch({ type: FETCH_CHANNELS_SUCCESS, payload: response.data });
+        const channels = response.data;
+
+        if (user) {
+            const subscriptionsResponse = await api.get(`/subscriptions/user/${user.userName}`);
+            const subscribedChannelIds = subscriptionsResponse.data.map(sub => sub.channelId);
+
+            const channelsWithSubscriptions = channels.map(channel => ({
+                ...channel,
+                isSubscribed: subscribedChannelIds.includes(channel.id),
+            }));
+
+            dispatch({ type: FETCH_CHANNELS_SUCCESS, payload: channelsWithSubscriptions });
+        } else {
+            dispatch({ type: FETCH_CHANNELS_SUCCESS, payload: channels });
+        }
     } catch (error) {
         const errorMessage = error.response ? error.response.data : error.message;
-        console.error("Error fetching channels:", errorMessage);
         dispatch({ type: FETCH_CHANNELS_FAILURE, payload: errorMessage });
     }
 };
@@ -49,4 +61,5 @@ export const unsubscribeFromChannel = (channelId, userName) => async (dispatch) 
         console.error(error);
     }
 };
+
 

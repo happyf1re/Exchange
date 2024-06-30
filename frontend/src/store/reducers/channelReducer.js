@@ -14,10 +14,12 @@ const initialState = {
 export default function channelReducer(state = initialState, action) {
     switch (action.type) {
         case FETCH_CHANNELS_SUCCESS:
-            console.log("Channels fetched successfully:", action.payload);
             return {
                 ...state,
-                channels: action.payload,
+                channels: action.payload.map(channel => ({
+                    ...channel,
+                    isSubscribed: false // Добавляем isSubscribed по умолчанию
+                })),
                 error: null,
             };
         case FETCH_CHANNELS_FAILURE:
