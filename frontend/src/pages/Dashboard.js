@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Grid, Button, Modal, TextField, Typography } from '@mui/material';
+import { Box, Grid, Button, Modal, TextField, Typography, FormControlLabel, Checkbox } from '@mui/material';
 import ChannelList from '../components/ChannelList';
 import ChannelMessages from '../components/ChannelMessages';
 import Sidebar from '../components/Sidebar';
@@ -13,7 +13,6 @@ const Dashboard = () => {
     const [isPrivate, setIsPrivate] = useState(false);
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user);
-    const channels = useSelector((state) => state.channels.channels);
 
     useEffect(() => {
         if (user) {
@@ -33,24 +32,22 @@ const Dashboard = () => {
 
     const handleCreateChannel = () => {
         if (channelName && user) {
-            console.log('Creating channel with data:', {
+            const channelData = {
                 name: channelName,
                 creatorUserName: user.userName,
                 isPrivate,
                 parentId: null,
-            });
-            dispatch(createChannel({
-                name: channelName,
-                creatorUserName: user.userName,
-                isPrivate,
-                parentId: null,
-            })).then(() => {
-                setChannelName('');
-                setIsPrivate(false);
-                handleClose();
-            }).catch((error) => {
-                console.error('Error creating channel:', error);
-            });
+            };
+            console.log('Creating channel with data:', channelData);
+            dispatch(createChannel(channelData))
+                .then(() => {
+                    setChannelName('');
+                    setIsPrivate(false);
+                    handleClose();
+                })
+                .catch((error) => {
+                    console.error('Error creating channel:', error);
+                });
         }
     };
 
@@ -87,6 +84,16 @@ const Dashboard = () => {
                         margin="normal"
                         value={channelName}
                         onChange={(e) => setChannelName(e.target.value)}
+                    />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={isPrivate}
+                                onChange={(e) => setIsPrivate(e.target.checked)}
+                                color="primary"
+                            />
+                        }
+                        label="Private Channel"
                     />
                     <Button variant="contained" color="primary" onClick={handleCreateChannel}>
                         Create

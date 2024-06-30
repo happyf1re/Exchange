@@ -36,6 +36,7 @@ public class ChannelService {
 
     @Transactional
     public Channel createChannel(String name, String creatorUserName, boolean isPrivate, Integer parentId) {
+        System.out.println("Creating channel with isPrivate: " + isPrivate);
         User creator = userRepository.findByUserName(creatorUserName)
                 .orElseThrow(() -> new RuntimeException("User not found: " + creatorUserName));
         Channel parent = parentId != null ? channelRepository.findById(parentId).orElse(null) : null;

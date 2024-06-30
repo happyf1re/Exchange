@@ -23,7 +23,9 @@ public class ChannelController {
 
     @PostMapping("/create")
     public ResponseEntity<ChannelDTO> createChannel(@RequestBody ChannelDTO request) {
+        System.out.println("Received create channel request: " + request);
         Channel channel = channelService.createChannel(request.getName(), request.getCreatorUserName(), request.isPrivate(), request.getParentId());
+        System.out.println("Created channel: " + channel);
         return new ResponseEntity<>(convertToDto(channel), HttpStatus.CREATED);
     }
 

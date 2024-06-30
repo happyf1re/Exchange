@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -13,7 +15,10 @@ public class ChannelDTO {
     private Integer id;
     private String name;
     private String creatorUserName;
+
+    @JsonProperty("isPrivate")
     private boolean isPrivate;
+
     private Integer parentId;
 }
 

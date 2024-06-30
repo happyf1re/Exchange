@@ -4,10 +4,10 @@ import com.altasoft.exchange.message.Message;
 import com.altasoft.exchange.subscription.Subscription;
 import com.altasoft.exchange.user.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -16,7 +16,7 @@ import java.util.Set;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "_channels")
+@Table(name = "channels")
 public class Channel {
 
     @Id
@@ -30,7 +30,8 @@ public class Channel {
     @JoinColumn(name = "creator_id", nullable = false)
     private User creator;
 
-    @Column(nullable = false)
+    @JsonProperty("isPrivate")
+    @Column(name = "is_private", nullable = false)
     private boolean isPrivate;
 
     @ManyToOne
@@ -38,14 +39,14 @@ public class Channel {
     private Channel parent;
 
     @OneToMany(mappedBy = "parent")
-    private Set<Channel> subChannels = new HashSet<>();
+    private Set<Channel> subChannels;
 
     @OneToMany(mappedBy = "channel")
-    private Set<Subscription> subscribers = new HashSet<>();
+    private Set<Subscription> subscribers;
 
     @OneToMany(mappedBy = "channel")
     @JsonManagedReference
-    private Set<Message> messages = new HashSet<>();
+    private Set<Message> messages;
 }
 
 
