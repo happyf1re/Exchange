@@ -4,7 +4,7 @@ import { LOGIN_SUCCESS, LOGIN_FAILURE, REGISTER_SUCCESS, REGISTER_FAILURE, LOGOU
 export const loginUser = (credentials) => async (dispatch) => {
     try {
         const response = await api.post('/users/login', credentials);
-        localStorage.setItem('user', JSON.stringify(response.data)); // Сохраняем пользователя в localStorage
+        localStorage.setItem('user', JSON.stringify(response.data));
         dispatch({ type: LOGIN_SUCCESS, payload: response.data });
     } catch (error) {
         const errorMessage = error.response ? error.response.data : error.message;

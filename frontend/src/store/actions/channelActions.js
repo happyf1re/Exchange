@@ -25,7 +25,7 @@ export const createChannel = (channelData) => async (dispatch) => {
     try {
         const response = await api.post('/channels/create', channelData);
         dispatch({ type: CREATE_CHANNEL_SUCCESS, payload: response.data });
-        dispatch(fetchChannels()); // добавим перезагрузку списка каналов после создания
+        dispatch(fetchChannels());
     } catch (error) {
         const errorMessage = error.response ? error.response.data : error.message;
         dispatch({ type: CREATE_CHANNEL_FAILURE, payload: errorMessage });

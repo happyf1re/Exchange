@@ -6,7 +6,7 @@ import { List, ListItem, ListItemText, Button, Box, Typography } from '@mui/mate
 const ChannelList = ({ onSelectChannel }) => {
     const dispatch = useDispatch();
     const channels = useSelector((state) => state.channels.channels);
-    const user = useSelector((state) => state.auth.user); // Получаем текущего пользователя
+    const user = useSelector((state) => state.auth.user);
     const error = useSelector((state) => state.channels.error);
 
     useEffect(() => {

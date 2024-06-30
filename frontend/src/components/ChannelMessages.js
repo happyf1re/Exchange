@@ -7,7 +7,7 @@ const ChannelMessages = ({ channelId }) => {
     const dispatch = useDispatch();
     const messages = useSelector((state) => state.message.messages) || [];
     const [newMessage, setNewMessage] = useState('');
-    const user = useSelector((state) => state.auth.user); // Получаем текущего пользователя
+    const user = useSelector((state) => state.auth.user);
 
     useEffect(() => {
         dispatch(fetchChannelMessages(channelId));
