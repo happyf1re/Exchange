@@ -16,10 +16,7 @@ export default function channelReducer(state = initialState, action) {
         case FETCH_CHANNELS_SUCCESS:
             return {
                 ...state,
-                channels: action.payload.map(channel => ({
-                    ...channel,
-                    isSubscribed: false // Добавляем isSubscribed по умолчанию
-                })),
+                channels: action.payload,
                 error: null,
             };
         case FETCH_CHANNELS_FAILURE:
