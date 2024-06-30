@@ -28,7 +28,14 @@ const ChannelMessages = ({ channelId }) => {
             <List>
                 {messages.map((message) => (
                     <ListItem key={message.id}>
-                        <ListItemText primary={message.content} />
+                        <ListItemText
+                            primary={
+                                <Typography variant="subtitle2" color="textSecondary">
+                                    {message.authorUserName} - {new Date(message.timestamp).toLocaleString()}
+                                </Typography>
+                            }
+                            secondary={message.content}
+                        />
                     </ListItem>
                 ))}
             </List>
