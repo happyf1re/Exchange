@@ -47,22 +47,13 @@ public class ChannelController {
         return ResponseEntity.ok("Invitation sent");
     }
 
-    @GetMapping
-    public ResponseEntity<List<ChannelDTO>> getAllChannels() {
-        List<Channel> channels = channelService.getAllChannels();
+    @GetMapping("/{userName}")
+    public ResponseEntity<List<ChannelDTO>> getAllChannels(@PathVariable String userName) {
+        List<Channel> channels = channelService.getAllChannels(userName);
         List<ChannelDTO> channelDTOs = channels.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(channelDTOs, HttpStatus.OK);
-    }
-
-    @Getter
-    @Setter
-    public static class CreateChannelRequest {
-        private String name;
-        private String creatorUserName;
-        private boolean isPrivate;
-        private Integer parentId;
     }
 
     @Getter

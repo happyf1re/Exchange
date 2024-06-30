@@ -8,25 +8,12 @@ import {
     UNSUBSCRIBE_CHANNEL_SUCCESS,
 } from '../types';
 
-export const fetchChannels = () => async (dispatch, getState) => {
+export const fetchChannels = (userName) => async (dispatch) => {
     try {
-        const { user } = getState().auth;
-        const response = await api.get('/channels');
+        const response = await api.get(`/channels/${userName}`);
         const channels = response.data;
 
-        if (user) {
-            const subscriptionsResponse = await api.get(`/subscriptions/user/${user.userName}`);
-            const subscribedChannelIds = subscriptionsResponse.data.map(sub => sub.channelId);
-
-            const channelsWithSubscriptions = channels.map(channel => ({
-                ...channel,
-                isSubscribed: subscribedChannelIds.includes(channel.id),
-            }));
-
-            dispatch({ type: FETCH_CHANNELS_SUCCESS, payload: channelsWithSubscriptions });
-        } else {
-            dispatch({ type: FETCH_CHANNELS_SUCCESS, payload: channels });
-        }
+        dispatch({ type: FETCH_CHANNELS_SUCCESS, payload: channels });
     } catch (error) {
         const errorMessage = error.response ? error.response.data : error.message;
         dispatch({ type: FETCH_CHANNELS_FAILURE, payload: errorMessage });
@@ -37,7 +24,7 @@ export const createChannel = (channelData) => async (dispatch) => {
     try {
         const response = await api.post('/channels/create', channelData);
         dispatch({ type: CREATE_CHANNEL_SUCCESS, payload: response.data });
-        dispatch(fetchChannels());
+        dispatch(fetchChannels(channelData.creatorUserName)); // обновление списка каналов
     } catch (error) {
         const errorMessage = error.response ? error.response.data : error.message;
         dispatch({ type: CREATE_CHANNEL_FAILURE, payload: errorMessage });

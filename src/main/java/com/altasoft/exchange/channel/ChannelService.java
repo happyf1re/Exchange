@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ChannelService {
@@ -119,8 +120,16 @@ public class ChannelService {
         invitationRepository.save(invitation);
     }
 
-    public List<Channel> getAllChannels() {
-        return channelRepository.findAll();
+    public List<Channel> getAllChannels(String userName) {
+        User user = userRepository.findByUserName(userName)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userName));
+
+        List<Channel> allChannels = channelRepository.findAll();
+        return allChannels.stream()
+                .filter(channel -> !channel.isPrivate() ||
+                        channel.getCreator().equals(user) ||
+                        channel.getSubscribers().stream().anyMatch(sub -> sub.getUser().equals(user)))
+                .collect(Collectors.toList());
     }
 }
 

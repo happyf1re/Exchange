@@ -17,7 +17,7 @@ const Dashboard = () => {
     useEffect(() => {
         if (user) {
             console.log("User found in Dashboard, fetching channels");
-            dispatch(fetchChannels());
+            dispatch(fetchChannels(user.userName));
         } else {
             console.log("No user found in Dashboard");
         }
