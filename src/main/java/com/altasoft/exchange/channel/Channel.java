@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -37,14 +38,15 @@ public class Channel {
     private Channel parent;
 
     @OneToMany(mappedBy = "parent")
-    private Set<Channel> subChannels;
+    private Set<Channel> subChannels = new HashSet<>();
 
     @OneToMany(mappedBy = "channel")
-    private Set<Subscription> subscribers;
+    private Set<Subscription> subscribers = new HashSet<>();
 
     @OneToMany(mappedBy = "channel")
     @JsonManagedReference
-    private Set<Message> messages;
+    private Set<Message> messages = new HashSet<>();
 }
+
 
 

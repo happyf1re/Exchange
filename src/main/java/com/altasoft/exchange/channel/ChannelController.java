@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/channels")
@@ -21,9 +22,9 @@ public class ChannelController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Channel> createChannel(@RequestBody ChannelController.CreateChannelRequest request) {
+    public ResponseEntity<ChannelDTO> createChannel(@RequestBody ChannelDTO request) {
         Channel channel = channelService.createChannel(request.getName(), request.getCreatorUserName(), request.isPrivate(), request.getParentId());
-        return new ResponseEntity<>(channel, HttpStatus.CREATED);
+        return new ResponseEntity<>(convertToDto(channel), HttpStatus.CREATED);
     }
 
     @PostMapping("/subscribe")
@@ -45,9 +46,12 @@ public class ChannelController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Channel>> getAllChannels() {
+    public ResponseEntity<List<ChannelDTO>> getAllChannels() {
         List<Channel> channels = channelService.getAllChannels();
-        return new ResponseEntity<>(channels, HttpStatus.OK);
+        List<ChannelDTO> channelDTOs = channels.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(channelDTOs, HttpStatus.OK);
     }
 
     @Getter
@@ -73,4 +77,17 @@ public class ChannelController {
         private String inviteeUserName;
         private Integer channelId;
     }
+
+    private ChannelDTO convertToDto(Channel channel) {
+        ChannelDTO channelDTO = new ChannelDTO();
+        channelDTO.setId(channel.getId());
+        channelDTO.setName(channel.getName());
+        channelDTO.setCreatorUserName(channel.getCreator().getUserName());
+        channelDTO.setPrivate(channel.isPrivate());
+        if (channel.getParent() != null) {
+            channelDTO.setParentId(channel.getParent().getId());
+        }
+        return channelDTO;
+    }
 }
+

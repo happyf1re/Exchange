@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/messages")
@@ -60,9 +61,12 @@ public class MessageController {
     }
 
     @GetMapping("/channel/{channelId}")
-    public ResponseEntity<List<Message>> getMessagesByChannel(@PathVariable Integer channelId) {
+    public ResponseEntity<List<MessageDTO>> getMessagesByChannel(@PathVariable Integer channelId) {
         List<Message> messages = messageRepository.findByChannelId(channelId);
-        return ResponseEntity.ok(messages);
+        List<MessageDTO> messageDTOs = messages.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(messageDTOs);
     }
 
     @Getter
@@ -74,7 +78,18 @@ public class MessageController {
         private String authorUserName;
         private Integer channelId;
     }
+
+    private MessageDTO convertToDto(Message message) {
+        MessageDTO messageDTO = new MessageDTO();
+        messageDTO.setId(message.getId());
+        messageDTO.setContent(message.getContent());
+        messageDTO.setAuthorUserName(message.getAuthor().getUserName());
+        messageDTO.setChannelId(message.getChannel().getId());
+        messageDTO.setTimestamp(message.getTimestamp());
+        return messageDTO;
+    }
 }
+
 
 
 

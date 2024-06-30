@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -17,38 +18,54 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
+    public ResponseEntity<UserDTO> register(@RequestBody User user) {
         User registeredUser = userService.register(user);
-        return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
+        return new ResponseEntity<>(convertToDto(registeredUser), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         try {
             User loggedInUser = userService.login(user.getUserName(), user.getPassword());
-            return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
+            return new ResponseEntity<>(convertToDto(loggedInUser), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Integer id) {
-        return userService.getUserById(id);
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Integer id) {
+        User user = userService.getUserById(id);
+        return ResponseEntity.ok(convertToDto(user));
     }
 
     @GetMapping("/all")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        List<UserDTO> userDTOs = users.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(userDTOs);
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@RequestBody User user) {
-        return userService.updateUser(user);
+    public ResponseEntity<UserDTO> updateUser(@RequestBody User user) {
+        User updatedUser = userService.updateUser(user);
+        return ResponseEntity.ok(convertToDto(updatedUser));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
+        return ResponseEntity.ok().build();
+    }
+
+    private UserDTO convertToDto(User user) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setUserName(user.getUserName());
+        userDTO.setEmail(user.getEmail());
+        return userDTO;
     }
 }
+
