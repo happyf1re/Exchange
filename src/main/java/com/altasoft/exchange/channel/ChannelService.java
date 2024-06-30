@@ -120,6 +120,7 @@ public class ChannelService {
         invitationRepository.save(invitation);
     }
 
+    @Transactional
     public List<Channel> getAllChannels(String userName) {
         User user = userRepository.findByUserName(userName)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userName));

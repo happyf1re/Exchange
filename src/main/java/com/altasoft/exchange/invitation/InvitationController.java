@@ -54,6 +54,8 @@ public class InvitationController {
         return ResponseEntity.ok("Invitations sent");
     }
 
+
+
     private InvitationDTO convertToDto(Invitation invitation) {
         InvitationDTO invitationDTO = new InvitationDTO();
         invitationDTO.setId(invitation.getId());
@@ -76,7 +78,7 @@ public class InvitationController {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public class InviteUsersRequest {
+    public static class InviteUsersRequest {
         private Integer channelId;
         private List<Integer> userIds;
         private String inviterUserName;
