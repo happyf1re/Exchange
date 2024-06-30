@@ -1,16 +1,18 @@
 package com.altasoft.exchange.invitation;
 
-import com.altasoft.exchange.subscription.Subscription;
-import com.altasoft.exchange.subscription.SubscriptionRepository;
 import com.altasoft.exchange.channel.Channel;
 import com.altasoft.exchange.channel.ChannelRepository;
+import com.altasoft.exchange.subscription.Subscription;
+import com.altasoft.exchange.subscription.SubscriptionRepository;
 import com.altasoft.exchange.user.User;
 import com.altasoft.exchange.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class InvitationService {
@@ -52,7 +54,38 @@ public class InvitationService {
         channelRepository.save(channel);
         invitationRepository.delete(invitation);
     }
+
+    @Transactional
+    public List<User> getUsersNotSubscribedToChannel(Integer channelId) {
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new RuntimeException("Channel not found: " + channelId));
+
+        List<User> allUsers = userRepository.findAll();
+        return allUsers.stream()
+                .filter(user -> !channel.getSubscribers().contains(user))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void inviteUsers(Integer channelId, List<Integer> userIds, String inviterUserName) {
+        User inviter = userRepository.findByUserName(inviterUserName)
+                .orElseThrow(() -> new RuntimeException("User not found: " + inviterUserName));
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new RuntimeException("Channel not found: " + channelId));
+
+        List<User> usersToInvite = userRepository.findAllById(userIds);
+        for (User invitee : usersToInvite) {
+            Invitation invitation = new Invitation();
+            invitation.setChannel(channel);
+            invitation.setInviter(inviter);
+            invitation.setInvitee(invitee);
+            invitation.setTimestamp(LocalDateTime.now());
+            invitationRepository.save(invitation);
+        }
+    }
 }
+
+
 
 
 

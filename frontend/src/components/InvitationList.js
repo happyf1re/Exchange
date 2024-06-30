@@ -7,10 +7,13 @@ const InvitationList = () => {
     const dispatch = useDispatch();
     const invitations = useSelector((state) => state.invitations.invitations);
     const error = useSelector((state) => state.invitations.error);
+    const user = useSelector((state) => state.auth.user);
 
     useEffect(() => {
-        dispatch(fetchInvitations());
-    }, [dispatch]);
+        if (user) {
+            dispatch(fetchInvitations(user.userName));
+        }
+    }, [dispatch, user]);
 
     const handleAccept = (invitationId) => {
         dispatch(acceptInvitation(invitationId));
