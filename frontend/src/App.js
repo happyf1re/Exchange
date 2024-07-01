@@ -5,7 +5,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Invitations from './pages/Invitations';
 import Header from './components/Header';
-import { checkAuth, logoutUser } from './store/actions/authActions';
+import { checkAuth } from './store/actions/authActions';
 
 const App = () => {
     const dispatch = useDispatch();
@@ -13,21 +13,11 @@ const App = () => {
     const user = useSelector((state) => state.auth.user);
 
     useEffect(() => {
-        const handleBeforeUnload = () => {
-            localStorage.removeItem('user');
-        };
-
-        window.addEventListener('beforeunload', handleBeforeUnload);
-
         if (localStorage.getItem('user')) {
             dispatch(checkAuth());
         } else {
             navigate('/login');
         }
-
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-        };
     }, [dispatch, navigate]);
 
     useEffect(() => {

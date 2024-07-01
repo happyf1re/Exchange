@@ -24,6 +24,9 @@ const Header = () => {
                 </Typography>
                 {user && (
                     <>
+                        <Typography variant="body1" sx={{ marginRight: 2 }}>
+                            Welcome, {user.userName}
+                        </Typography>
                         <IconButton color="inherit" component={Link} to="/notifications">
                             <Badge badgeContent={unreadNotifications} color="error">
                                 <NotificationsIcon />

@@ -30,7 +30,7 @@ const InvitationList = () => {
             <List>
                 {invitations.map((invitation) => (
                     <ListItem key={invitation.id}>
-                        <ListItemText primary={`Invitation to ${invitation.channelName} from ${invitation.inviterUserName}`} />
+                        <ListItemText primary={`Invitation to ${invitation.channelName || 'unknown channel'} from ${invitation.inviterUserName}`} />
                         <Button variant="contained" color="primary" onClick={() => handleAccept(invitation.id)}>Accept</Button>
                     </ListItem>
                 ))}
