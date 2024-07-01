@@ -16,6 +16,7 @@ const ChannelList = ({ onSelectChannel }) => {
 
     useEffect(() => {
         if (user) {
+            console.log('Fetching channels for user:', user.userName); // Добавьте эту строку
             dispatch(fetchChannels(user.userName));
         }
     }, [dispatch, user]);

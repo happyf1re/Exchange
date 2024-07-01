@@ -37,6 +37,8 @@ export const checkAuth = () => async (dispatch) => {
             localStorage.removeItem('user');
             dispatch({ type: LOGOUT });
         }
+    } else {
+        dispatch({ type: LOGOUT });
     }
 };
 

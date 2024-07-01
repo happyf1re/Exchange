@@ -9,6 +9,7 @@ const initialState = {
 export default function authReducer(state = initialState, action) {
     switch (action.type) {
         case LOGIN_SUCCESS:
+            console.log('Login successful:', action.payload); // Добавьте эту строку
             return {
                 ...state,
                 user: action.payload,

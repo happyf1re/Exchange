@@ -5,6 +5,7 @@ import ChannelMessages from '../components/ChannelMessages';
 import Sidebar from '../components/Sidebar';
 import { useDispatch, useSelector } from 'react-redux';
 import { createChannel, fetchChannels } from '../store/actions/channelActions';
+import { useNavigate } from 'react-router-dom'; // Добавляем хук useNavigate
 
 const Dashboard = () => {
     const [selectedChannel, setSelectedChannel] = useState(null);
@@ -13,6 +14,7 @@ const Dashboard = () => {
     const [isPrivate, setIsPrivate] = useState(false);
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user);
+    const navigate = useNavigate(); // Определяем navigate
 
     useEffect(() => {
         if (user) {
@@ -20,8 +22,9 @@ const Dashboard = () => {
             dispatch(fetchChannels(user.userName));
         } else {
             console.log("No user found in Dashboard");
+            navigate('/login'); // Используем navigate для перенаправления
         }
-    }, [dispatch, user]);
+    }, [dispatch, user, navigate]);
 
     const handleSelectChannel = (channelId) => {
         setSelectedChannel(channelId);

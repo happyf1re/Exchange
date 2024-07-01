@@ -29,7 +29,20 @@ public class UserService {
     public User getUserById(Integer id) {
         LOGGER.info("=======================Ищем пользователя===========================");
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No such user"));
+                .orElseThrow(() -> {
+                    LOGGER.error("No such user with id: {}", id);
+                    return new EntityNotFoundException("No such user");
+                });
+    }
+
+    @Transactional
+    public User getUserByUserName(String userName) {
+        LOGGER.info("=======================Ищем пользователя по имени===========================");
+        return userRepository.findByUserName(userName)
+                .orElseThrow(() -> {
+                    LOGGER.error("No such user with userName: {}", userName);
+                    return new RuntimeException("User not found: " + userName);
+                });
     }
 
     @Transactional

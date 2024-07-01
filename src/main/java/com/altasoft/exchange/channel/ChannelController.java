@@ -49,6 +49,9 @@ public class ChannelController {
 
     @GetMapping("/{userName}")
     public ResponseEntity<List<ChannelDTO>> getAllChannels(@PathVariable String userName) {
+        if (userName == null || userName.isEmpty()) {
+            throw new RuntimeException("User name is null or empty");
+        }
         List<Channel> channels = channelService.getAllChannels(userName);
         List<ChannelDTO> channelDTOs = channels.stream()
                 .map(this::convertToDto)

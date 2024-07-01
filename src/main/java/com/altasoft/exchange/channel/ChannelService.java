@@ -7,6 +7,8 @@ import com.altasoft.exchange.subscription.SubscriptionRepository;
 import com.altasoft.exchange.user.User;
 import com.altasoft.exchange.user.UserRepository;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaAdmin;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 public class ChannelService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChannelService.class);
     private final ChannelRepository channelRepository;
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
@@ -123,7 +126,10 @@ public class ChannelService {
     @Transactional
     public List<Channel> getAllChannels(String userName) {
         User user = userRepository.findByUserName(userName)
-                .orElseThrow(() -> new RuntimeException("User not found: " + userName));
+                .orElseThrow(() -> {
+                    LOGGER.error("User not found: {}", userName);
+                    return new RuntimeException("User not found: " + userName);
+                });
 
         List<Channel> allChannels = channelRepository.findAll();
         return allChannels.stream()
