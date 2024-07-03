@@ -29,6 +29,7 @@ public class User {
     private String email;
 
     @OneToMany(mappedBy = "user")
+    @ToString.Exclude
     private Set<Subscription> subscriptions;
 }
 
