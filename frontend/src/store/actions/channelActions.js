@@ -1,5 +1,3 @@
-// actions/channelActions.js
-
 import api from '../../api/api';
 import {
     CREATE_CHANNEL_SUCCESS,

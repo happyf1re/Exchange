@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 
@@ -15,11 +16,13 @@ import org.springframework.stereotype.Service;
 public class KafkaMessageListener {
 
     private final NotificationService notificationService;
+    private final SimpMessagingTemplate template; // Для отправки сообщений через WebSocket
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public KafkaMessageListener(NotificationService notificationService, ObjectMapper objectMapper) {
+    public KafkaMessageListener(NotificationService notificationService, SimpMessagingTemplate template, ObjectMapper objectMapper) {
         this.notificationService = notificationService;
+        this.template = template;
         this.objectMapper = objectMapper;
     }
 
@@ -32,6 +35,9 @@ public class KafkaMessageListener {
 
         // Обрабатываем уведомление для конкретного пользователя
         notificationService.sendNotification(userName, messageJson);
+
+        // Отправляем сообщение через WebSocket
+        template.convertAndSend("/topic/" + userName, messageJson);
     }
 }
 

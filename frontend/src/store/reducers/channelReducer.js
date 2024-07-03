@@ -1,5 +1,3 @@
-// reducers/channelReducer.js
-
 import {
     FETCH_CHANNELS_SUCCESS,
     FETCH_CHANNELS_FAILURE,

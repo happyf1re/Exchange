@@ -69,6 +69,18 @@ public class MessageController {
         return ResponseEntity.ok(messageDTOs);
     }
 
+    @GetMapping("/feed/{userName}")
+    public ResponseEntity<List<MessageDTO>> getUserFeed(@PathVariable String userName) {
+        User user = userRepository.findByUserName(userName)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userName));
+
+        List<Message> messages = messageRepository.findByAuthor(user);
+        List<MessageDTO> messageDTOs = messages.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(messageDTOs);
+    }
+
     @Getter
     @Setter
     @AllArgsConstructor

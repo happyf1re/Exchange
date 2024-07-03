@@ -1,5 +1,6 @@
 const initialState = {
     messages: [],
+    feed: [],
     loading: false,
     error: null,
 };
@@ -41,6 +42,29 @@ const messageReducer = (state = initialState, action) => {
                 ...state,
                 loading: false,
                 error: action.error,
+            };
+        case 'FETCH_USER_FEED_REQUEST':
+            return {
+                ...state,
+                loading: true,
+                error: null,
+            };
+        case 'FETCH_USER_FEED_SUCCESS':
+            return {
+                ...state,
+                loading: false,
+                feed: action.payload,
+            };
+        case 'FETCH_USER_FEED_FAILURE':
+            return {
+                ...state,
+                loading: false,
+                error: action.error,
+            };
+        case 'NEW_MESSAGE_RECEIVED':
+            return {
+                ...state,
+                feed: [...state.feed, action.payload],
             };
         default:
             return state;

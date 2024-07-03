@@ -13,9 +13,13 @@ const Sidebar = () => {
                 <ListItem button component={Link} to="/invitations">
                     <ListItemText primary="Invitations" />
                 </ListItem>
+                <ListItem button component={Link} to="/feed">
+                    <ListItemText primary="Feed" />
+                </ListItem>
             </List>
         </Box>
     );
 };
 
 export default Sidebar;
+

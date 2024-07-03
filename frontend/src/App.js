@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Invitations from './pages/Invitations';
+import Feed from './pages/Feed';
 import Header from './components/Header';
 import { checkAuth } from './store/actions/authActions';
 
@@ -36,13 +37,13 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/invitations" element={<Invitations />} />
-                <Route path="/" element={<Navigate to="/login" />} />
+                <Route path="/feed" element={<Feed />} />
+                <Route path="/" element={<Navigate to="/dashboard" />} />
             </Routes>
         </div>
     );
 };
 
 export default App;
-
 
 

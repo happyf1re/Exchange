@@ -20,6 +20,16 @@ export const sendMessage = (channelId, message, authorUserName) => async (dispat
     }
 };
 
+export const fetchUserFeed = (userName) => async (dispatch) => {
+    dispatch({ type: 'FETCH_USER_FEED_REQUEST' });
+    try {
+        const response = await api.get(`/messages/feed/${userName}`);
+        dispatch({ type: 'FETCH_USER_FEED_SUCCESS', payload: response.data });
+    } catch (error) {
+        dispatch({ type: 'FETCH_USER_FEED_FAILURE', error: error.message });
+    }
+};
+
 
 
 
