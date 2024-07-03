@@ -126,12 +126,15 @@ public class ChannelService {
     @Transactional
     public List<Channel> getAllChannels(String userName) {
         User user = userRepository.findByUserName(userName)
-                .orElseThrow(() -> {
-                    LOGGER.error("User not found: {}", userName);
-                    return new RuntimeException("User not found: " + userName);
-                });
+                .orElseThrow(() -> new RuntimeException("User not found: " + userName));
 
         List<Channel> allChannels = channelRepository.findAll();
+        allChannels.forEach(channel -> {
+            boolean isSubscribed = channel.getSubscribers().stream()
+                    .anyMatch(subscription -> subscription.getUser().equals(user));
+            channel.setIsSubscribed(isSubscribed); // Устанавливаем значение поля isSubscribed
+        });
+
         return allChannels.stream()
                 .filter(channel -> !channel.isPrivate() ||
                         channel.getCreator().equals(user) ||

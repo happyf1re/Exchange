@@ -1,3 +1,5 @@
+// actions/channelActions.js
+
 import api from '../../api/api';
 import {
     CREATE_CHANNEL_SUCCESS,
@@ -12,7 +14,6 @@ export const fetchChannels = (userName) => async (dispatch) => {
     try {
         const response = await api.get(`/channels/${userName}`);
         const channels = response.data;
-
         dispatch({ type: FETCH_CHANNELS_SUCCESS, payload: channels });
     } catch (error) {
         const errorMessage = error.response ? error.response.data : error.message;
@@ -48,5 +49,7 @@ export const unsubscribeFromChannel = (channelId, userName) => async (dispatch) 
         console.error(error);
     }
 };
+
+
 
 

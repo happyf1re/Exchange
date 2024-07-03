@@ -19,6 +19,9 @@ public class ChannelDTO {
     @JsonProperty("isPrivate")
     private boolean isPrivate;
 
+    @JsonProperty("isSubscribed")
+    private boolean isSubscribed; // Новое поле
+
     private Integer parentId;
 }
 

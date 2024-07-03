@@ -49,9 +49,6 @@ public class ChannelController {
 
     @GetMapping("/{userName}")
     public ResponseEntity<List<ChannelDTO>> getAllChannels(@PathVariable String userName) {
-        if (userName == null || userName.isEmpty()) {
-            throw new RuntimeException("User name is null or empty");
-        }
         List<Channel> channels = channelService.getAllChannels(userName);
         List<ChannelDTO> channelDTOs = channels.stream()
                 .map(this::convertToDto)
@@ -80,6 +77,7 @@ public class ChannelController {
         channelDTO.setName(channel.getName());
         channelDTO.setCreatorUserName(channel.getCreator().getUserName());
         channelDTO.setPrivate(channel.isPrivate());
+        channelDTO.setSubscribed(channel.isSubscribed()); // Добавляем информацию о подписке
         if (channel.getParent() != null) {
             channelDTO.setParentId(channel.getParent().getId());
         }

@@ -41,12 +41,21 @@ public class Channel {
     @OneToMany(mappedBy = "parent")
     private Set<Channel> subChannels;
 
+    @Transient
+    @JsonProperty("isSubscribed")
+    private boolean isSubscribed;
+
     @OneToMany(mappedBy = "channel")
     private Set<Subscription> subscribers;
 
     @OneToMany(mappedBy = "channel")
     @JsonManagedReference
     private Set<Message> messages;
+
+    public void setIsSubscribed(boolean isSubscribed) {
+        this.isSubscribed = isSubscribed;
+    }
+
 }
 
 

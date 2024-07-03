@@ -1,9 +1,11 @@
+// reducers/channelReducer.js
+
 import {
     FETCH_CHANNELS_SUCCESS,
     FETCH_CHANNELS_FAILURE,
     SUBSCRIBE_CHANNEL_SUCCESS,
     UNSUBSCRIBE_CHANNEL_SUCCESS,
-    CREATE_CHANNEL_SUCCESS
+    CREATE_CHANNEL_SUCCESS,
 } from '../types';
 
 const initialState = {

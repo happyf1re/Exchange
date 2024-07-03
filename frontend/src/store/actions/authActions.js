@@ -42,6 +42,7 @@ export const checkAuth = () => async (dispatch) => {
 
 export const logoutUser = () => (dispatch) => {
     localStorage.removeItem('user');
+    localStorage.removeItem('subscribedChannels'); // Очистка состояния подписок
     dispatch({ type: LOGOUT });
 };
 
