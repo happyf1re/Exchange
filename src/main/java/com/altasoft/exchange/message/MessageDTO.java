@@ -16,5 +16,6 @@ public class MessageDTO {
     private String content;
     private String authorUserName;
     private Integer channelId;
+    private String channelName; // добавляем название канала
     private LocalDateTime timestamp;
 }

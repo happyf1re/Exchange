@@ -116,6 +116,7 @@ public class FeedController {
         messageDTO.setContent(message.getContent());
         messageDTO.setAuthorUserName(message.getAuthor().getUserName());
         messageDTO.setChannelId(message.getChannel().getId());
+        messageDTO.setChannelName(message.getChannel().getName()); // Добавляем название канала
         messageDTO.setTimestamp(message.getTimestamp());
         return messageDTO;
     }

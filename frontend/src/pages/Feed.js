@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
-import { Box, List, ListItem, ListItemText, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserFeed } from '../store/actions/messageActions';
-import { connectWebSocket, disconnectWebSocket } from '../websocket';
-import Sidebar from '../components/Sidebar';
+import { List, ListItem, ListItemText, Box, Typography } from '@mui/material';
+import Sidebar from '../components/Sidebar'; // добавляем Sidebar
 
 const Feed = () => {
     const dispatch = useDispatch();
@@ -13,38 +12,33 @@ const Feed = () => {
     useEffect(() => {
         if (user) {
             dispatch(fetchUserFeed(user.userName));
-
-            const stompClient = connectWebSocket(user.userName, (newMessage) => {
-                dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: newMessage });
-            });
-
-            return () => {
-                disconnectWebSocket();
-            };
         }
     }, [dispatch, user]);
 
     return (
         <Box sx={{ display: 'flex' }}>
-            <Sidebar />
-            <Box sx={{ flexGrow: 1, padding: 3 }}>
+            <Sidebar /> {/* добавляем Sidebar */}
+            <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h5" gutterBottom>My Feed</Typography>
-                {messages.length === 0 ? (
-                    <Typography variant="h6">No messages available</Typography>
-                ) : (
-                    <List>
-                        {messages.map((message) => (
-                            <ListItem key={message.id}>
-                                <ListItemText
-                                    primary={<Typography variant="subtitle2" color="textSecondary">
-                                        {message.channelName} - {message.authorUserName} - {new Date(message.timestamp).toLocaleString()}
-                                    </Typography>}
-                                    secondary={message.content}
-                                />
-                            </ListItem>
-                        ))}
-                    </List>
-                )}
+                <List>
+                    {messages.map((message) => (
+                        <ListItem key={message.id}>
+                            <ListItemText
+                                primary={
+                                    <React.Fragment>
+                                        <Typography variant="subtitle1" color="textPrimary">
+                                            {message.channelName} {/* Отображаем название канала только в ленте */}
+                                        </Typography>
+                                        <Typography variant="subtitle2" color="textSecondary">
+                                            {message.authorUserName} - {new Date(message.timestamp).toLocaleString()}
+                                        </Typography>
+                                    </React.Fragment>
+                                }
+                                secondary={message.content}
+                            />
+                        </ListItem>
+                    ))}
+                </List>
             </Box>
         </Box>
     );
