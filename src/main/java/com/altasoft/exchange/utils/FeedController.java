@@ -14,19 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController
-@RequestMapping("/api/v1/feed")
+@Service
 public class FeedController {
 
     @Autowired
@@ -35,6 +34,7 @@ public class FeedController {
     @Autowired
     private MessageRepository messageRepository;
 
+    @Autowired
     private ChannelRepository channelRepository;
 
     @Autowired
@@ -51,38 +51,35 @@ public class FeedController {
         this.objectMapper = objectMapper;
     }
 
-    // Метод для подписки на обновления фида пользователя через WebSocket
-    @MessageMapping("/feed/{userName}")
-    @SendTo("/topic/user.{userName}")
-    public String subscribeToFeed(@DestinationVariable String userName) {
-        return "Subscribed to feed for user: " + userName;
+    // Метод для подписки на обновления канала через WebSocket
+    @MessageMapping("/feed/{channelName}")
+    @SendTo("/topic/channel.{channelName}")
+    public String subscribeToChannelFeed(@DestinationVariable String channelName) {
+        return "Subscribed to feed for channel: " + channelName;
     }
 
-    // Метод для получения сообщений фида пользователя через REST API
+    // Метод для получения всех сообщений фида через REST API
     @GetMapping("/{userName}")
     public List<MessageDTO> getUserFeed(@PathVariable String userName) {
-        User user = userRepository.findByUserName(userName)
-                .orElseThrow(() -> new RuntimeException("User not found: " + userName));
-
-        List<Message> messages = messageRepository.findByAuthor(user);
+        List<Message> messages = messageRepository.findAll();
         return messages.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
     // Метод для обработки сообщений из Kafka
-    @KafkaListener(topics = "your-topic", groupId = "your-group-id")
-    public void consume(String message) {
+    @KafkaListener(topicPattern = ".*", groupId = "#{T(java.util.UUID).randomUUID().toString()}")
+    public void consume(@Payload String message) {
         try {
             JsonNode jsonNode = objectMapper.readTree(message);
-            String userName = jsonNode.get("authorUserName").asText();
+            String channelName = jsonNode.get("channelName").asText();
 
             // Сохранение сообщения в базу данных
             MessageJson messageJson = objectMapper.treeToValue(jsonNode, MessageJson.class);
             processMessage(messageJson);
 
             // Отправка сообщения через WebSocket
-            messagingTemplate.convertAndSend("/topic/user." + userName, message);
+            messagingTemplate.convertAndSend("/topic/channel." + channelName, message);
         } catch (Exception e) {
             // Обработка ошибок
             e.printStackTrace();
@@ -121,6 +118,7 @@ public class FeedController {
         return messageDTO;
     }
 }
+
 
 
 
