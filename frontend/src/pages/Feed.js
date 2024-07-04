@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserFeed } from '../store/actions/messageActions';
 import { List, ListItem, ListItemText, Box, Typography } from '@mui/material';
-import Sidebar from '../components/Sidebar'; // добавляем Sidebar
+import Sidebar from '../components/Sidebar';
 
 const Feed = () => {
     const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const Feed = () => {
 
     return (
         <Box sx={{ display: 'flex' }}>
-            <Sidebar /> {/* добавляем Sidebar */}
+            <Sidebar />
             <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h5" gutterBottom>My Feed</Typography>
                 <List>
@@ -27,7 +27,7 @@ const Feed = () => {
                                 primary={
                                     <React.Fragment>
                                         <Typography variant="subtitle1" color="textPrimary">
-                                            {message.channelName} {/* Отображаем название канала только в ленте */}
+                                            {message.channelName} {/* Отображаем название канала */}
                                         </Typography>
                                         <Typography variant="subtitle2" color="textSecondary">
                                             {message.authorUserName} - {new Date(message.timestamp).toLocaleString()}

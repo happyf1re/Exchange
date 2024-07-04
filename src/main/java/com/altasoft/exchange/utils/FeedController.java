@@ -17,15 +17,17 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@RestController
+@RequestMapping("/api/v1/feed")
 public class FeedController {
 
     @Autowired
@@ -61,7 +63,7 @@ public class FeedController {
     // Метод для получения всех сообщений фида через REST API
     @GetMapping("/{userName}")
     public List<MessageDTO> getUserFeed(@PathVariable String userName) {
-        List<Message> messages = messageRepository.findAll();
+        List<Message> messages = messageRepository.findAll(); // Получаем все сообщения
         return messages.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
