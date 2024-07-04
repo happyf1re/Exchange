@@ -10,15 +10,16 @@ export const fetchChannelMessages = (channelId) => async (dispatch) => {
     }
 };
 
-export const sendMessage = (channelId, message, authorUserName) => async (dispatch) => {
+export const sendMessage = (channelId, message, authorUserName, channelName) => async (dispatch) => {
     dispatch({ type: 'SEND_MESSAGE_REQUEST' });
     try {
-        const response = await api.post('/messages/send', { message, authorUserName, channelId });
+        const response = await api.post('/messages/send', { message, authorUserName, channelId, channelName });
         dispatch({ type: 'SEND_MESSAGE_SUCCESS', payload: response.data });
     } catch (error) {
         dispatch({ type: 'SEND_MESSAGE_FAILURE', error: error.message });
     }
 };
+
 
 export const fetchUserFeed = (userName) => async (dispatch) => {
     dispatch({ type: 'FETCH_USER_FEED_REQUEST' });

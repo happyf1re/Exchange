@@ -6,10 +6,13 @@ import com.altasoft.exchange.message.Message;
 import com.altasoft.exchange.message.MessageDTO;
 import com.altasoft.exchange.message.MessageJson;
 import com.altasoft.exchange.message.MessageRepository;
+import com.altasoft.exchange.subscription.Subscription;
 import com.altasoft.exchange.user.User;
 import com.altasoft.exchange.user.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -17,6 +20,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,9 +30,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+@Controller
 @RestController
 @RequestMapping("/api/v1/feed")
 public class FeedController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FeedController.class);
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -60,10 +68,16 @@ public class FeedController {
         return "Subscribed to feed for channel: " + channelName;
     }
 
-    // Метод для получения всех сообщений фида через REST API
+    // Метод для получения всех сообщений из каналов, на которые подписан пользователь, через REST API
     @GetMapping("/{userName}")
     public List<MessageDTO> getUserFeed(@PathVariable String userName) {
-        List<Message> messages = messageRepository.findAll(); // Получаем все сообщения
+        User user = userRepository.findByUserName(userName)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userName));
+        List<Channel> subscribedChannels = user.getSubscriptions().stream()
+                .map(Subscription::getChannel)
+                .collect(Collectors.toList());
+
+        List<Message> messages = messageRepository.findByChannelIn(subscribedChannels);
         return messages.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
@@ -73,18 +87,28 @@ public class FeedController {
     @KafkaListener(topicPattern = ".*", groupId = "#{T(java.util.UUID).randomUUID().toString()}")
     public void consume(@Payload String message) {
         try {
+            LOGGER.info("Received message: {}", message);
             JsonNode jsonNode = objectMapper.readTree(message);
-            String channelName = jsonNode.get("channelName").asText();
 
-            // Сохранение сообщения в базу данных
-            MessageJson messageJson = objectMapper.treeToValue(jsonNode, MessageJson.class);
-            processMessage(messageJson);
+            if (jsonNode.has("authorUserName") && jsonNode.has("message") && jsonNode.has("channelId")) {
+                int channelId = jsonNode.get("channelId").asInt();
+                Channel channel = channelRepository.findById(channelId)
+                        .orElseThrow(() -> new RuntimeException("Channel not found: " + channelId));
+                String channelName = channel.getName();
 
-            // Отправка сообщения через WebSocket
-            messagingTemplate.convertAndSend("/topic/channel." + channelName, message);
+                // Сохранение сообщения в базу данных
+                MessageJson messageJson = objectMapper.treeToValue(jsonNode, MessageJson.class);
+                processMessage(messageJson);
+
+                // Отправка сообщения через WebSocket
+                messagingTemplate.convertAndSend("/topic/channel." + channelName, message);
+            } else {
+                LOGGER.error("Invalid message format: {}", message);
+                throw new RuntimeException("Invalid message format");
+            }
         } catch (Exception e) {
             // Обработка ошибок
-            e.printStackTrace();
+            LOGGER.error("Error processing message: ", e);
         }
     }
 
