@@ -4,7 +4,7 @@ import { Stomp } from '@stomp/stompjs';
 let stompClient = null;
 
 export const connectWebSocket = (userName, onMessageReceived) => {
-    if (stompClient !== null) {
+    if (stompClient && stompClient.connected) {
         return stompClient;
     }
 
@@ -24,10 +24,12 @@ export const connectWebSocket = (userName, onMessageReceived) => {
 };
 
 export const subscribeToChannel = (channelName, onMessageReceived) => {
-    if (stompClient) {
+    if (stompClient && stompClient.connected) {
         stompClient.subscribe(`/topic/channel.${channelName}`, (message) => {
             onMessageReceived(JSON.parse(message.body));
         });
+    } else {
+        console.error('Cannot subscribe to channel. No STOMP connection.');
     }
 };
 
