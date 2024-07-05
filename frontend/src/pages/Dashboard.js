@@ -6,7 +6,7 @@ import Sidebar from '../components/Sidebar';
 import { useDispatch, useSelector } from 'react-redux';
 import { createChannel, fetchChannels } from '../store/actions/channelActions';
 import { useNavigate } from 'react-router-dom';
-import {connectWebSocket, disconnectWebSocket} from '../websocket';
+import { connectWebSocket, disconnectWebSocket } from '../websocket';
 
 const Dashboard = () => {
     const [selectedChannel, setSelectedChannel] = useState(null);

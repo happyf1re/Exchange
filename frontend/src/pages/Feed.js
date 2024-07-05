@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserFeed } from '../store/actions/messageActions';
 import { List, ListItem, ListItemText, Box, Typography } from '@mui/material';
 import Sidebar from '../components/Sidebar';
-import {connectWebSocket, disconnectWebSocket, subscribeToChannel} from '../websocket';
+import { connectWebSocket, disconnectWebSocket, subscribeToChannel } from '../websocket';
 
 const Feed = () => {
     const dispatch = useDispatch();
@@ -35,7 +35,7 @@ const Feed = () => {
                 disconnectWebSocket();
             }
         };
-    }, [dispatch, user, subscribedChannels]);
+    }, [dispatch, user, subscribedChannels, stompClient]);
 
     return (
         <Box sx={{ display: 'flex' }}>

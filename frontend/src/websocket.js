@@ -12,23 +12,35 @@ export const connectWebSocket = (userName, onMessageReceived) => {
         }
 
         const socket = new SockJS('http://localhost:8080/ws');
-        stompClient = Stomp.over(socket);
+        stompClient = Stomp.over(() => socket);
 
-        stompClient.connect({}, (frame) => {
+        stompClient.reconnect_delay = 5000; // Добавляем задержку перед повторным подключением
+
+        stompClient.onConnect = (frame) => {
             console.log('Connected: ' + frame);
             isConnected = true;
             resolve(stompClient);
-        }, (error) => {
-            console.error('WebSocket connection error:', error);
+        };
+
+        stompClient.onStompError = (frame) => {
+            console.error('Broker reported error: ' + frame.headers['message']);
+            console.error('Additional details: ' + frame.body);
             isConnected = false;
-            reject(error);
-        });
+            reject(frame);
+        };
+
+        stompClient.onWebSocketClose = (event) => {
+            console.log('WebSocket closed: ' + event);
+            isConnected = false;
+        };
+
+        stompClient.activate();
     });
 };
 
 export const subscribeToChannel = (channelName, onMessageReceived) => {
     if (stompClient && isConnected) {
-        stompClient.subscribe(`/topic/${channelName}`, (message) => {
+        stompClient.subscribe(`/topic/channel.${channelName}`, (message) => {
             onMessageReceived(JSON.parse(message.body));
         });
     } else {
@@ -38,7 +50,7 @@ export const subscribeToChannel = (channelName, onMessageReceived) => {
 
 export const disconnectWebSocket = () => {
     if (stompClient !== null) {
-        stompClient.disconnect(() => {
+        stompClient.deactivate(() => {
             console.log("Disconnected");
             isConnected = false;
         });
