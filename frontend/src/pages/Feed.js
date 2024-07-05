@@ -3,22 +3,31 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserFeed } from '../store/actions/messageActions';
 import { List, ListItem, ListItemText, Box, Typography } from '@mui/material';
 import Sidebar from '../components/Sidebar';
-import { connectWebSocket, disconnectWebSocket } from '../websocket';
+import {connectWebSocket, disconnectWebSocket, subscribeToChannel} from '../websocket';
 
 const Feed = () => {
     const dispatch = useDispatch();
     const messages = useSelector((state) => state.message.feed) || [];
     const user = useSelector((state) => state.auth.user);
+    const subscribedChannels = useSelector((state) => state.channels.channels.filter(channel => channel.isSubscribed));
     const [stompClient, setStompClient] = useState(null);
 
     useEffect(() => {
         if (user) {
             dispatch(fetchUserFeed(user.userName));
 
-            const client = connectWebSocket(user.userName, (message) => {
+            connectWebSocket(user.userName, (message) => {
                 dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
+            }).then((client) => {
+                setStompClient(client);
+                subscribedChannels.forEach(channel => {
+                    subscribeToChannel(channel.name, (message) => {
+                        dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
+                    });
+                });
+            }).catch((error) => {
+                console.error('Error connecting WebSocket:', error);
             });
-            setStompClient(client);
         }
 
         return () => {
@@ -26,7 +35,7 @@ const Feed = () => {
                 disconnectWebSocket();
             }
         };
-    }, [dispatch, user, stompClient]);
+    }, [dispatch, user, subscribedChannels]);
 
     return (
         <Box sx={{ display: 'flex' }}>

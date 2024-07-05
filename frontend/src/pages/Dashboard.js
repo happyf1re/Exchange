@@ -16,6 +16,7 @@ const Dashboard = () => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user);
     const navigate = useNavigate();
+    const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -56,18 +57,22 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        return () => {
-            disconnectWebSocket();
-        };
-    }, []);
-
-    useEffect(() => {
-        if (user) {
+        if (user && !isConnected) {
             connectWebSocket(user.userName, (message) => {
                 dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
+            }).then(() => {
+                setIsConnected(true);
+            }).catch((error) => {
+                console.error('Error connecting WebSocket:', error);
             });
         }
-    }, [user, dispatch]);
+
+        return () => {
+            if (isConnected) {
+                disconnectWebSocket();
+            }
+        };
+    }, [user, dispatch, isConnected]);
 
     return (
         <Box sx={{ display: 'flex' }}>
