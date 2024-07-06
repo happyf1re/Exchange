@@ -26,7 +26,7 @@ const App = () => {
     useEffect(() => {
         if (user) {
             console.log("User is authenticated:", user);
-            const stompClient = connectWebSocket(user.userName, (message) => {
+            connectWebSocket(user.userName, (message) => {
                 console.log("Received WebSocket message:", message);
                 dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
             });

@@ -8,23 +8,25 @@ let shouldReconnect = true;
 export const connectWebSocket = (userName, onMessageReceived) => {
     return new Promise((resolve, reject) => {
         if (stompClient && isConnected) {
+            console.log('WebSocket уже подключен.');
             resolve(stompClient);
             return;
         }
 
+        console.log('Открытие WebSocket соединения...');
         const socket = new SockJS('http://localhost:8080/ws');
         stompClient = Stomp.over(() => socket);
 
         stompClient.reconnect_delay = 0; // Отключаем автоматическое переподключение
 
         stompClient.onConnect = (frame) => {
-            console.log('Подключен: ' + frame);
+            console.log('WebSocket подключен: ' + frame);
             isConnected = true;
             resolve(stompClient);
         };
 
         stompClient.onStompError = (frame) => {
-            console.error('Ошибка брокера: ' + frame.headers['message']);
+            console.error('Ошибка STOMP: ' + frame.headers['message']);
             console.error('Дополнительные детали: ' + frame.body);
             isConnected = false;
             reject(frame);
@@ -52,12 +54,15 @@ export const connectWebSocket = (userName, onMessageReceived) => {
 };
 
 export const isWebSocketConnected = () => {
+    console.log('Проверка состояния WebSocket соединения: ', isConnected);
     return stompClient && isConnected;
 };
 
 export const subscribeToChannel = (channelName, onMessageReceived) => {
+    console.log('Попытка подписки на канал: ', channelName);
     if (isWebSocketConnected()) {
         stompClient.subscribe(`/topic/channel.${channelName}`, (message) => {
+            console.log('Сообщение получено из канала: ', channelName);
             onMessageReceived(JSON.parse(message.body));
         });
     } else {
@@ -69,7 +74,7 @@ export const disconnectWebSocket = () => {
     if (stompClient !== null) {
         shouldReconnect = false; // Отключаем флаг переподключения
         stompClient.deactivate(() => {
-            console.log("Отключен");
+            console.log("WebSocket отключен");
             isConnected = false;
         });
         stompClient = null;

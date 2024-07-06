@@ -4,6 +4,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { logoutUser } from '../store/actions/authActions';
+import { disconnectWebSocket } from '../websocket'; // Импортируем функцию отключения WebSocket
 
 const Header = () => {
     const navigate = useNavigate();
@@ -13,6 +14,7 @@ const Header = () => {
 
     const handleLogout = () => {
         dispatch(logoutUser());
+        disconnectWebSocket(); // Отключаем WebSocket при выходе пользователя
         navigate('/login');
     };
 
