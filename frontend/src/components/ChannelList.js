@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchChannels, subscribeToChannel, unsubscribeFromChannel } from '../store/actions/channelActions';
+import { fetchChannels, subscribeToChannel as reduxSubscribeToChannel, unsubscribeFromChannel } from '../store/actions/channelActions';
 import { List, ListItem, ListItemText, Button, Box, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Checkbox, FormControlLabel } from '@mui/material';
 import { fetchAvailableUsers, inviteUsers } from '../store/actions/invitationActions';
+import { connectWebSocket, subscribeToChannel, isWebSocketConnected } from '../websocket';
 
 const ChannelList = ({ onSelectChannel }) => {
     const dispatch = useDispatch();
@@ -21,9 +22,21 @@ const ChannelList = ({ onSelectChannel }) => {
         }
     }, [dispatch, user]);
 
-    const handleSubscribe = (channelId) => {
+    const handleSubscribe = async (channelId) => {
         if (user) {
-            dispatch(subscribeToChannel(channelId, user.userName));
+            try {
+                await ensureWebSocketConnection(user.userName);
+                if (isWebSocketConnected()) {
+                    subscribeToChannel(channelId, (message) => {
+                        dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
+                    });
+                    dispatch(reduxSubscribeToChannel(channelId, user.userName));
+                } else {
+                    console.error('Невозможно подписаться на канал. Нет STOMP соединения.');
+                }
+            } catch (error) {
+                console.error('Ошибка при подписке на канал:', error);
+            }
         }
     };
 
@@ -53,6 +66,24 @@ const ChannelList = ({ onSelectChannel }) => {
         } else {
             setSelectedUsers([...selectedUsers, userId]);
         }
+    };
+
+    const ensureWebSocketConnection = async (userName) => {
+        return new Promise((resolve, reject) => {
+            if (window.stompClient && window.stompClient.connected) {
+                resolve(window.stompClient);
+            } else {
+                connectWebSocket(userName, (message) => {
+                    dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
+                }).then((stompClient) => {
+                    window.stompClient = stompClient;
+                    resolve(stompClient);
+                }).catch((error) => {
+                    console.error('Ошибка подключения WebSocket:', error);
+                    reject(error);
+                });
+            }
+        });
     };
 
     if (!Array.isArray(channels)) {

@@ -7,7 +7,7 @@ import Invitations from './pages/Invitations';
 import Feed from './pages/Feed';
 import Header from './components/Header';
 import { checkAuth } from './store/actions/authActions';
-import { connectWebSocket, subscribeToChannel, disconnectWebSocket } from './websocket'; // Импорт WebSocket
+import { connectWebSocket, subscribeToChannel, disconnectWebSocket } from './websocket';
 
 const App = () => {
     const dispatch = useDispatch();
@@ -28,7 +28,7 @@ const App = () => {
             console.log("User is authenticated:", user);
             const stompClient = connectWebSocket(user.userName, (message) => {
                 console.log("Received WebSocket message:", message);
-                // Здесь можно добавить обработку входящих сообщений, например, обновление состояния Redux
+                dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
             });
 
             return () => {
@@ -38,7 +38,7 @@ const App = () => {
             console.log("No user found");
             navigate('/login');
         }
-    }, [user, navigate]);
+    }, [user, navigate, dispatch]);
 
     useEffect(() => {
         if (channels.length > 0) {
@@ -46,12 +46,12 @@ const App = () => {
                 if (channel.isSubscribed) {
                     subscribeToChannel(channel.name, (message) => {
                         console.log(`Received WebSocket message for channel ${channel.name}:`, message);
-                        // Здесь можно добавить обработку входящих сообщений, например, обновление состояния Redux
+                        dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
                     });
                 }
             });
         }
-    }, [channels]);
+    }, [channels, dispatch]);
 
     return (
         <div>

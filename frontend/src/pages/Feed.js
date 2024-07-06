@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserFeed } from '../store/actions/messageActions';
 import { List, ListItem, ListItemText, Box, Typography } from '@mui/material';
@@ -10,32 +10,62 @@ const Feed = () => {
     const messages = useSelector((state) => state.message.feed) || [];
     const user = useSelector((state) => state.auth.user);
     const subscribedChannels = useSelector((state) => state.channels.channels.filter(channel => channel.isSubscribed));
-    const [stompClient, setStompClient] = useState(null);
+    const [client, setClient] = useState(null);
+    const isComponentMounted = useRef(true);
 
     useEffect(() => {
-        if (user) {
-            dispatch(fetchUserFeed(user.userName));
+        isComponentMounted.current = true;
 
-            connectWebSocket(user.userName, (message) => {
-                dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
-            }).then((client) => {
-                setStompClient(client);
-                subscribedChannels.forEach(channel => {
-                    subscribeToChannel(channel.name, (message) => {
-                        dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
+        const initializeWebSocket = async () => {
+            if (user && isComponentMounted.current) {
+                console.log('Fetching user feed and initializing WebSocket...');
+                dispatch(fetchUserFeed(user.userName));
+
+                try {
+                    const stompClient = await connectWebSocket(user.userName, (message) => {
+                        if (isComponentMounted.current) {
+                            dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
+                        }
                     });
-                });
-            }).catch((error) => {
-                console.error('Error connecting WebSocket:', error);
-            });
-        }
+
+                    if (isComponentMounted.current) {
+                        setClient(stompClient);
+                        subscribedChannels.forEach(channel => {
+                            subscribeToChannel(channel.name, (message) => {
+                                if (isComponentMounted.current) {
+                                    dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
+                                }
+                            });
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error connecting WebSocket:', error);
+                }
+            }
+        };
+
+        initializeWebSocket();
 
         return () => {
-            if (stompClient) {
+            console.log('Component unmounting, disconnecting WebSocket...');
+            isComponentMounted.current = false;
+            if (client) {
                 disconnectWebSocket();
             }
         };
-    }, [dispatch, user, subscribedChannels, stompClient]);
+    }, [dispatch, user]);
+
+    useEffect(() => {
+        if (client) {
+            subscribedChannels.forEach(channel => {
+                subscribeToChannel(channel.name, (message) => {
+                    if (isComponentMounted.current) {
+                        dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
+                    }
+                });
+            });
+        }
+    }, [client, subscribedChannels, dispatch]);
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -67,5 +97,3 @@ const Feed = () => {
 };
 
 export default Feed;
-
-
