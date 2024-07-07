@@ -22,7 +22,7 @@ const Header = () => {
         <AppBar position="static">
             <Toolbar>
                 <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                    Exchange v0.0.1
+                    Exchange v0.0.2
                 </Typography>
                 {user && (
                     <>
