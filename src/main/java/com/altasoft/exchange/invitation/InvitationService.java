@@ -6,7 +6,7 @@ import com.altasoft.exchange.subscription.Subscription;
 import com.altasoft.exchange.subscription.SubscriptionRepository;
 import com.altasoft.exchange.user.User;
 import com.altasoft.exchange.user.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +21,14 @@ public class InvitationService {
     private final UserRepository userRepository;
     private final ChannelRepository channelRepository;
     private final SubscriptionRepository subscriptionRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    @Autowired
-    public InvitationService(InvitationRepository invitationRepository, UserRepository userRepository, ChannelRepository channelRepository, SubscriptionRepository subscriptionRepository) {
+    public InvitationService(InvitationRepository invitationRepository, UserRepository userRepository, ChannelRepository channelRepository, SubscriptionRepository subscriptionRepository, SimpMessagingTemplate messagingTemplate) {
         this.invitationRepository = invitationRepository;
         this.userRepository = userRepository;
         this.channelRepository = channelRepository;
         this.subscriptionRepository = subscriptionRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Transactional
@@ -88,6 +89,9 @@ public class InvitationService {
             invitation.setInvitee(invitee);
             invitation.setTimestamp(LocalDateTime.now());
             invitationRepository.save(invitation);
+
+            // Отправляем уведомление через WebSocket
+            messagingTemplate.convertAndSendToUser(invitee.getUserName(), "/queue/invitations", "NEW_INVITATION");
         }
     }
 }

@@ -15,15 +15,15 @@ const Sidebar = () => {
             dispatch(fetchInvitations(user.userName));
 
             connectWebSocket(user.userName, (message) => {
-                if (message.type === 'NEW_INVITATION') {
-                    dispatch({ type: 'FETCH_INVITATIONS_SUCCESS', payload: message.invitations });
+                if (message === 'NEW_INVITATION') {
+                    dispatch(fetchInvitations(user.userName));
                 }
-            });
-
-            subscribeToInvitations(user.userName, (message) => {
-                if (message.type === 'NEW_INVITATION') {
-                    dispatch({ type: 'FETCH_INVITATIONS_SUCCESS', payload: message.invitations });
-                }
+            }).then(() => {
+                subscribeToInvitations(user.userName, (message) => {
+                    if (message === 'NEW_INVITATION') {
+                        dispatch(fetchInvitations(user.userName));
+                    }
+                });
             });
         }
     }, [dispatch, user]);

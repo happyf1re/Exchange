@@ -8,8 +8,8 @@ import {
     FETCH_AVAILABLE_USERS_FAILURE,
     INVITE_USERS_SUCCESS,
     INVITE_USERS_FAILURE,
-    REJECT_INVITATION_SUCCESS, // Добавлено
-    REJECT_INVITATION_FAILURE  // Добавлено
+    REJECT_INVITATION_SUCCESS,
+    REJECT_INVITATION_FAILURE
 } from '../types';
 
 export const fetchAvailableUsers = (channelId) => async (dispatch) => {
@@ -39,18 +39,22 @@ export const fetchInvitations = (userName) => async (dispatch) => {
     }
 };
 
-export const acceptInvitation = (invitationId) => async (dispatch) => {
+export const acceptInvitation = (invitationId) => async (dispatch, getState) => {
     try {
         await api.post(`/invitations/accept/${invitationId}`);
+        const userName = getState().auth.user.userName;
+        dispatch(fetchInvitations(userName));
         dispatch({ type: ACCEPT_INVITATION_SUCCESS, payload: invitationId });
     } catch (error) {
         dispatch({ type: ACCEPT_INVITATION_FAILURE, payload: error.response.data });
     }
 };
 
-export const rejectInvitation = (invitationId) => async (dispatch) => {
+export const rejectInvitation = (invitationId) => async (dispatch, getState) => {
     try {
         await api.post(`/invitations/reject/${invitationId}`);
+        const userName = getState().auth.user.userName;
+        dispatch(fetchInvitations(userName));
         dispatch({ type: REJECT_INVITATION_SUCCESS, payload: invitationId });
     } catch (error) {
         dispatch({ type: REJECT_INVITATION_FAILURE, payload: error.response.data });

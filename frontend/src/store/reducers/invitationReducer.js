@@ -7,15 +7,15 @@ import {
     FETCH_AVAILABLE_USERS_FAILURE,
     INVITE_USERS_SUCCESS,
     INVITE_USERS_FAILURE,
-    REJECT_INVITATION_SUCCESS, // Добавлено
-    REJECT_INVITATION_FAILURE  // Добавлено
+    REJECT_INVITATION_SUCCESS,
+    REJECT_INVITATION_FAILURE
 } from '../types';
 
 const initialState = {
     invitations: [],
     availableUsers: [],
-    unreadInvitations: 0, // добавляем счётчик непринятых приглашений
     error: null,
+    unreadInvitations: 0
 };
 
 const invitationReducer = (state = initialState, action) => {
@@ -24,8 +24,8 @@ const invitationReducer = (state = initialState, action) => {
             return {
                 ...state,
                 invitations: action.payload,
-                unreadInvitations: action.payload.length, // устанавливаем счётчик
                 error: null,
+                unreadInvitations: action.payload.length
             };
         case FETCH_INVITATIONS_FAILURE:
             return {
@@ -33,15 +33,14 @@ const invitationReducer = (state = initialState, action) => {
                 error: action.payload,
             };
         case ACCEPT_INVITATION_SUCCESS:
-        case REJECT_INVITATION_SUCCESS: // Обработка отклонения приглашения
+        case REJECT_INVITATION_SUCCESS:
             return {
                 ...state,
                 invitations: state.invitations.filter(invitation => invitation.id !== action.payload),
-                unreadInvitations: state.unreadInvitations - 1, // уменьшаем счётчик
-                error: null,
+                unreadInvitations: state.unreadInvitations - 1
             };
         case ACCEPT_INVITATION_FAILURE:
-        case REJECT_INVITATION_FAILURE: // Обработка ошибки отклонения
+        case REJECT_INVITATION_FAILURE:
             return {
                 ...state,
                 error: action.payload,
