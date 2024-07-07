@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../store/actions/authActions';
-import { useNavigate } from 'react-router-dom'; // Добавляем хук useNavigate
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = ({ toggleForm }) => {
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
-    const navigate = useNavigate(); // Определяем navigate
+    const navigate = useNavigate();
     const { error, user } = useSelector((state) => state.auth);
 
     const handleSubmit = (e) => {
@@ -18,7 +18,7 @@ const LoginForm = ({ toggleForm }) => {
 
     useEffect(() => {
         if (user) {
-            navigate('/dashboard'); // Используем navigate для перенаправления
+            navigate('/dashboard');
         }
     }, [user, navigate]);
 

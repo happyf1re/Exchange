@@ -19,11 +19,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://localhost:3000") // Указываем конкретные адреса
+                .setAllowedOrigins("https://exfront.a-m0.ru") // Указываем конкретные адреса
                 .withSockJS();
     }
 }
 
-
+//https://exfront.a-m0.ru
+//http://localhost:3000
 
 

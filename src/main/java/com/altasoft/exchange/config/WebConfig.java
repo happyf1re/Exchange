@@ -14,7 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000") // Указываем конкретные адреса
+                        .allowedOrigins("https://exfront.a-m0.ru") // Указываем конкретные адреса
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
@@ -24,3 +24,4 @@ public class WebConfig implements WebMvcConfigurer {
 }
 
 //https://exfront.a-m0.ru
+//http://localhost:3000

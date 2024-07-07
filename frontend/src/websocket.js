@@ -4,7 +4,7 @@ import { Stomp } from '@stomp/stompjs';
 let stompClient = null;
 let isConnected = false;
 let shouldReconnect = true;
-let isConnecting = false; // добавлено для предотвращения множественных подключений
+let isConnecting = false;
 
 export const connectWebSocket = (userName, onMessageReceived) => {
     return new Promise((resolve, reject) => {
@@ -14,7 +14,7 @@ export const connectWebSocket = (userName, onMessageReceived) => {
         }
 
         isConnecting = true;
-        const socket = new SockJS('http://localhost:8080/ws');
+        const socket = new SockJS('https://exchange.a-m0.ru/ws');
         stompClient = Stomp.over(() => socket);
 
         stompClient.onConnect = (frame) => {
