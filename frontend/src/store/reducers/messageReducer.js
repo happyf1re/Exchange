@@ -62,9 +62,15 @@ const messageReducer = (state = initialState, action) => {
                 error: action.error,
             };
         case 'NEW_MESSAGE_RECEIVED':
+            const newMessage = action.payload;
             return {
                 ...state,
-                feed: [...state.feed, action.payload],
+                feed: state.feed.some(message => message.id === newMessage.id)
+                    ? state.feed
+                    : [...state.feed, newMessage],
+                messages: state.messages.some(message => message.id === newMessage.id)
+                    ? state.messages
+                    : [...state.messages, newMessage],
             };
         default:
             return state;

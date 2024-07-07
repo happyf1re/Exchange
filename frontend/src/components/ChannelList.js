@@ -25,7 +25,12 @@ const ChannelList = ({ onSelectChannel }) => {
     const handleSubscribe = async (channelId) => {
         if (user) {
             try {
-                await ensureWebSocketConnection(user.userName);
+                if (!isWebSocketConnected()) { // проверка на текущее состояние подключения
+                    await connectWebSocket(user.userName, (message) => {
+                        dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
+                    });
+                }
+
                 if (isWebSocketConnected()) {
                     console.log('Подписка на канал: ', channelId);
                     subscribeToChannel(channelId, (message) => {
@@ -68,25 +73,6 @@ const ChannelList = ({ onSelectChannel }) => {
         } else {
             setSelectedUsers([...selectedUsers, userId]);
         }
-    };
-
-    const ensureWebSocketConnection = async (userName) => {
-        return new Promise((resolve, reject) => {
-            if (window.stompClient && window.stompClient.connected) {
-                console.log('WebSocket уже подключен.');
-                resolve(window.stompClient);
-            } else {
-                connectWebSocket(userName, (message) => {
-                    dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
-                }).then((stompClient) => {
-                    window.stompClient = stompClient;
-                    resolve(stompClient);
-                }).catch((error) => {
-                    console.error('Ошибка подключения WebSocket:', error);
-                    reject(error);
-                });
-            }
-        });
     };
 
     if (!Array.isArray(channels)) {

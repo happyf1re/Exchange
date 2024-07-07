@@ -24,15 +24,20 @@ const App = () => {
     }, [dispatch, navigate]);
 
     useEffect(() => {
+        let connected = false; // флаг для проверки состояния подключения
         if (user) {
             console.log("User is authenticated:", user);
             connectWebSocket(user.userName, (message) => {
                 console.log("Received WebSocket message:", message);
                 dispatch({ type: 'NEW_MESSAGE_RECEIVED', payload: message });
+            }).then(() => {
+                connected = true;
             });
 
             return () => {
-                disconnectWebSocket();
+                if (connected) {
+                    disconnectWebSocket();
+                }
             };
         } else {
             console.log("No user found");
