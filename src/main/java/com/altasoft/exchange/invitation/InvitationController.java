@@ -39,6 +39,12 @@ public class InvitationController {
         return ResponseEntity.ok("Invitation accepted");
     }
 
+    @PostMapping("/reject/{invitationId}")
+    public ResponseEntity<String> rejectInvitation(@PathVariable Integer invitationId) {
+        invitationService.rejectInvitation(invitationId);
+        return ResponseEntity.ok("Invitation rejected");
+    }
+
     @GetMapping("/available-users/{channelId}")
     public ResponseEntity<List<UserDTO>> getAvailableUsersForChannel(@PathVariable Integer channelId) {
         List<User> users = invitationService.getUsersNotSubscribedToChannel(channelId);
@@ -53,8 +59,6 @@ public class InvitationController {
         invitationService.inviteUsers(request.getChannelId(), request.getUserIds(), request.getInviterUserName());
         return ResponseEntity.ok("Invitations sent");
     }
-
-
 
     private InvitationDTO convertToDto(Invitation invitation) {
         InvitationDTO invitationDTO = new InvitationDTO();

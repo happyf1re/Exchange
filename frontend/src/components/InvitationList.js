@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchInvitations, acceptInvitation } from '../store/actions/invitationActions';
+import { fetchInvitations, acceptInvitation, rejectInvitation } from '../store/actions/invitationActions';
 import { List, ListItem, ListItemText, Button, Box, Typography } from '@mui/material';
 
 const InvitationList = () => {
@@ -19,6 +19,10 @@ const InvitationList = () => {
         dispatch(acceptInvitation(invitationId));
     };
 
+    const handleReject = (invitationId) => {
+        dispatch(rejectInvitation(invitationId));
+    };
+
     if (!Array.isArray(invitations)) {
         return <Typography variant="h6">No invitations available</Typography>;
     }
@@ -32,6 +36,7 @@ const InvitationList = () => {
                     <ListItem key={invitation.id}>
                         <ListItemText primary={`Invitation to ${invitation.channelName || 'unknown channel'} from ${invitation.inviterUserName}`} />
                         <Button variant="contained" color="primary" onClick={() => handleAccept(invitation.id)}>Accept</Button>
+                        <Button variant="contained" color="secondary" onClick={() => handleReject(invitation.id)}>Reject</Button>
                     </ListItem>
                 ))}
             </List>

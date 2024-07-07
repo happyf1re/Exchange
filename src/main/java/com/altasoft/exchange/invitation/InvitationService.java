@@ -56,6 +56,13 @@ public class InvitationService {
     }
 
     @Transactional
+    public void rejectInvitation(Integer invitationId) {
+        Invitation invitation = invitationRepository.findById(invitationId)
+                .orElseThrow(() -> new RuntimeException("Invitation not found: " + invitationId));
+        invitationRepository.delete(invitation);
+    }
+
+    @Transactional
     public List<User> getUsersNotSubscribedToChannel(Integer channelId) {
         Channel channel = channelRepository.findById(channelId)
                 .orElseThrow(() -> new RuntimeException("Channel not found: " + channelId));

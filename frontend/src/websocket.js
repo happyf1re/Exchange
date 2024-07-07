@@ -51,6 +51,14 @@ export const subscribeToChannel = (channelName, onMessageReceived) => {
     }
 };
 
+export const subscribeToInvitations = (userName, onMessageReceived) => {
+    if (isWebSocketConnected()) {
+        stompClient.subscribe(`/topic/invitations.${userName}`, (message) => {
+            onMessageReceived(JSON.parse(message.body));
+        });
+    }
+};
+
 export const isWebSocketConnected = () => {
     return isConnected;
 };

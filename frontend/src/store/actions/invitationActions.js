@@ -7,7 +7,9 @@ import {
     FETCH_AVAILABLE_USERS_SUCCESS,
     FETCH_AVAILABLE_USERS_FAILURE,
     INVITE_USERS_SUCCESS,
-    INVITE_USERS_FAILURE
+    INVITE_USERS_FAILURE,
+    REJECT_INVITATION_SUCCESS, // Добавлено
+    REJECT_INVITATION_FAILURE  // Добавлено
 } from '../types';
 
 export const fetchAvailableUsers = (channelId) => async (dispatch) => {
@@ -43,6 +45,15 @@ export const acceptInvitation = (invitationId) => async (dispatch) => {
         dispatch({ type: ACCEPT_INVITATION_SUCCESS, payload: invitationId });
     } catch (error) {
         dispatch({ type: ACCEPT_INVITATION_FAILURE, payload: error.response.data });
+    }
+};
+
+export const rejectInvitation = (invitationId) => async (dispatch) => {
+    try {
+        await api.post(`/invitations/reject/${invitationId}`);
+        dispatch({ type: REJECT_INVITATION_SUCCESS, payload: invitationId });
+    } catch (error) {
+        dispatch({ type: REJECT_INVITATION_FAILURE, payload: error.response.data });
     }
 };
 
