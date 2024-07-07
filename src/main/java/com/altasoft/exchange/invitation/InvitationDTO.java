@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class InvitationDTO {
     private Integer id;
     private Integer channelId;
+    private String channelName;
     private String inviterUserName;
     private String inviteeUserName;
     private LocalDateTime timestamp;

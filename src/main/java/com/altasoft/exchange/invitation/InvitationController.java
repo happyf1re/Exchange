@@ -64,6 +64,7 @@ public class InvitationController {
         InvitationDTO invitationDTO = new InvitationDTO();
         invitationDTO.setId(invitation.getId());
         invitationDTO.setChannelId(invitation.getChannel().getId());
+        invitationDTO.setChannelName(invitation.getChannel().getName());  // Устанавливаем имя канала
         invitationDTO.setInviterUserName(invitation.getInviter().getUserName());
         invitationDTO.setInviteeUserName(invitation.getInvitee().getUserName());
         invitationDTO.setTimestamp(invitation.getTimestamp());
